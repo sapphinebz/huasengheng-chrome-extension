@@ -5,7 +5,7 @@ import { FocusObj } from "./models/focus-obj.model";
 import { cleanupAll } from "../utils/clean-up-all";
 import { currencyToNum } from "../utils/currency-to-num";
 import { appendContentElement } from "./append-content-element";
-import { formatCurrencyWithoutSymbol } from "../utils/format";
+import { formatCurrencyWithoutSymbol } from "../utils/format-currency-without-symbol";
 import { priceTypography } from "./price-typography";
 import { currentThaiTime } from "../utils/current-thai-time";
 
