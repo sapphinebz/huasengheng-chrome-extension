@@ -1,0 +1,24 @@
+{
+  "name": "huasengheng-tracker-extension",
+  "version": "1.0.0",
+  "description": "For tracking gold price profits and helping in making gold trading decisions.",
+  "scripts": {
+    "build": "parcel build manifest.json --config @parcel/config-webextension",
+    "start": "parcel watch manifest.json --host localhost --config @parcel/config-webextension",
+    "clean": "rm -rf dist .parcel-cache"
+  },
+  "keywords": [
+    "huasengheng",
+    "gold"
+  ],
+  "author": "Thanadit Buthong",
+  "license": "ISC",
+  "dependencies": {
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@parcel/config-webextension": "^2.12.0",
+    "chrome-types": "^0.1.277",
+    "parcel": "^2.12.0"
+  }
+}

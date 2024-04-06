@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "huasengheng-tracker",
+  "version": "0.0.1",
+  "background": {
+    "service_worker": "./service-workers/huasengheng.worker.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.huasengheng.com/*"],
+      "css": ["content-scripts/huasengheng/huasengheng.css"],
+      "js": ["content-scripts/huasengheng/huasengheng.ts"]
+    }
+  ],
+  "action": {
+    "default_icon": "./assets/icons/icon16_16.png"
+  },
+  "permissions": ["activeTab", "scripting"]
+}

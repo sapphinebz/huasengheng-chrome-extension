@@ -1,0 +1,5 @@
+export interface FocusObj {
+  owner: string;
+  price: number;
+  weight: number;
+}
