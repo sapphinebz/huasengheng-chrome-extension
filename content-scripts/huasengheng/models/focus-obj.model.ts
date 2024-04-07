@@ -1,6 +1,8 @@
+import { FOCUS_TYPE } from "./focus-type.model";
+
 export interface FocusObj {
   owner: string;
   price: number;
   weight: number;
-  type: "wantToSell" | "wantToBuy";
+  type: FOCUS_TYPE;
 }

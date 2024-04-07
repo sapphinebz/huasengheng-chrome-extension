@@ -8,6 +8,7 @@ import { appendContentElement } from "./append-content-element";
 import { formatCurrencyWithoutSymbol } from "../utils/format-currency-without-symbol";
 import { priceTypography } from "./price-typography";
 import { currentThaiTime } from "../utils/current-thai-time";
+import { FOCUS_TYPE } from "./models/focus-type.model";
 
 export function subscribePriceChannel({
   focusObj = [],
@@ -23,9 +24,9 @@ export function subscribePriceChannel({
     const typeSets = new Set(focusObj.map((obj) => obj.type));
     const contentChanges$ = from(typeSets).pipe(
       mergeMap((focusType) => {
-        if (focusType === "wantToBuy") {
+        if (focusType === FOCUS_TYPE.WANT_TO_BUY) {
           return watchContentChanges(huasenghengSellInPriceEl);
-        } else if (focusType === "wantToSell") {
+        } else if (focusType === FOCUS_TYPE.WANT_TO_SELL) {
           return watchContentChanges(huasenghengBuyInPriceEl);
         }
         return NEVER;
@@ -44,9 +45,9 @@ export function subscribePriceChannel({
         type,
       } of focusObj) {
         let textPrice = "0";
-        if (type === "wantToBuy") {
+        if (type === FOCUS_TYPE.WANT_TO_BUY) {
           textPrice = huasenghengSellInPriceEl.innerText;
-        } else if (type === "wantToSell") {
+        } else if (type === FOCUS_TYPE.WANT_TO_SELL) {
           textPrice = huasenghengBuyInPriceEl.innerText;
         }
         console.log(`${currentThaiTime()} ${textPrice}`);
@@ -56,7 +57,7 @@ export function subscribePriceChannel({
 
         const diffPrice = currentPrice - focusPrice;
         const totalPrice = diffPrice * focusWeight;
-        const { prefix, fontColor } = priceTypography(diffPrice);
+        const { prefix, fontColor } = priceTypography(diffPrice, type);
 
         sumPrice += totalPrice;
         const element = appendContentElement({
@@ -64,23 +65,25 @@ export function subscribePriceChannel({
           fontColor,
           text: `${owner} ${prefix}${diffPrice} ${prefix}${formatCurrencyWithoutSymbol(
             totalPrice
-          )}/${focusWeight}`,
+          )}/${focusWeight} ${
+            type === FOCUS_TYPE.WANT_TO_BUY ? "รอซื้อ" : "รอขาย"
+          }`,
         });
         topDs += 3;
         cleanups.push(() => element && element.remove());
       }
 
-      topDs += 1;
-      const { fontColor: sumPriceFontColor, prefix: sumPricePrefix } =
-        priceTypography(sumPrice);
-      const element = appendContentElement({
-        topDs,
-        fontColor: sumPriceFontColor,
-        text: `∑ ${sumPricePrefix}${formatCurrencyWithoutSymbol(sumPrice)}`,
-      });
-      topDs += 3;
+      // topDs += 1;
+      // const { fontColor: sumPriceFontColor, prefix: sumPricePrefix } =
+      //   priceTypography(sumPrice);
+      // const element = appendContentElement({
+      //   topDs,
+      //   fontColor: sumPriceFontColor,
+      //   text: `∑ ${sumPricePrefix}${formatCurrencyWithoutSymbol(sumPrice)}`,
+      // });
+      // topDs += 3;
 
-      cleanups.push(() => element && element.remove());
+      // cleanups.push(() => element && element.remove());
     });
     return subscription.unsubscribe.bind(subscription);
   }
