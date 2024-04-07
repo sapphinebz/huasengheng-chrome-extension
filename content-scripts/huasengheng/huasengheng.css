@@ -1,0 +1,14 @@
+.chrome-fixed {
+  position: fixed;
+  right: 1rem;
+  z-index: 99999;
+  background-color: white;
+}
+
+.chrome-font-xxx-large {
+  font-size: xxx-large;
+}
+
+.chrome-font-x-large {
+  font-size: x-large;
+}

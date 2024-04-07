@@ -1,17 +1,22 @@
 import { FOCUS_TYPE } from "./models/focus-type.model";
+import { FONT_COLOR } from "./models/font-color.model";
 
-const GREEN_COLOR = "#0FB153";
-const RED_COLOR = "#FC1940";
 export function priceTypography(diffPrice: number, focusType: FOCUS_TYPE) {
-  let fontColor = "#FFF";
+  let fontColor: FONT_COLOR = FONT_COLOR.WHITE_COLOR;
   let prefix = "";
 
   if (diffPrice < 0) {
     prefix = `-`;
-    fontColor = focusType === FOCUS_TYPE.WANT_TO_SELL ? RED_COLOR : GREEN_COLOR;
+    fontColor =
+      focusType === FOCUS_TYPE.WANT_TO_SELL
+        ? FONT_COLOR.RED_COLOR
+        : FONT_COLOR.GREEN_COLOR;
   } else if (diffPrice > 0) {
     prefix = `+`;
-    fontColor = focusType === FOCUS_TYPE.WANT_TO_SELL ? GREEN_COLOR : RED_COLOR;
+    fontColor =
+      focusType === FOCUS_TYPE.WANT_TO_SELL
+        ? FONT_COLOR.GREEN_COLOR
+        : FONT_COLOR.RED_COLOR;
   }
 
   return {

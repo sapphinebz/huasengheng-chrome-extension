@@ -2,8 +2,6 @@
 import { FOCUS_TYPE } from "./models/focus-type.model";
 import { subscribePriceChannel } from "./subscribe-price-channel";
 
-console.log(chrome.runtime.id);
-
 subscribePriceChannel({
   focusObj: [
     {

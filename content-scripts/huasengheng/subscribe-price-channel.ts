@@ -1,5 +1,5 @@
 import { NEVER, from, noop } from "rxjs";
-import { combineLatestAll, map, mergeMap } from "rxjs/operators";
+import { mergeMap } from "rxjs/operators";
 import { watchContentChanges } from "../utils/watch-content-changes";
 import { FocusObj } from "./models/focus-obj.model";
 import { cleanupAll } from "../utils/clean-up-all";
@@ -9,6 +9,8 @@ import { formatCurrencyWithoutSymbol } from "../utils/format-currency-without-sy
 import { priceTypography } from "./price-typography";
 import { currentThaiTime } from "../utils/current-thai-time";
 import { FOCUS_TYPE } from "./models/focus-type.model";
+import { FONT_COLOR } from "./models/font-color.model";
+import { FONT_SIZE } from "./models/font-size.model";
 
 export function subscribePriceChannel({
   focusObj = [],
@@ -73,6 +75,7 @@ export function subscribePriceChannel({
         cleanups.push(() => element && element.remove());
       }
 
+      // summarize profits
       // topDs += 1;
       // const { fontColor: sumPriceFontColor, prefix: sumPricePrefix } =
       //   priceTypography(sumPrice);
@@ -83,7 +86,26 @@ export function subscribePriceChannel({
       // });
       // topDs += 3;
 
-      // cleanups.push(() => element && element.remove());
+      topDs += 1;
+      const huasenghengBuyInPrice = currencyToNum(
+        huasenghengBuyInPriceEl.innerText
+      );
+      const huasenghengSellInPrice = currencyToNum(
+        huasenghengSellInPriceEl.innerText
+      );
+      const tradingGap = huasenghengSellInPrice - huasenghengBuyInPrice;
+      const nextBuyInPrice = huasenghengBuyInPrice - tradingGap;
+      const element = appendContentElement({
+        topDs,
+        fontColor: FONT_COLOR.RED_COLOR,
+        fontSize: FONT_SIZE.X_LARGE,
+        text: `*ถ้าขายตอนนี้ รอบหน้าต้องซื้อในราคาต่ำกว่า ${formatCurrencyWithoutSymbol(
+          nextBuyInPrice
+        )}`,
+      });
+      topDs += 3;
+
+      cleanups.push(() => element && element.remove());
     });
     return subscription.unsubscribe.bind(subscription);
   }

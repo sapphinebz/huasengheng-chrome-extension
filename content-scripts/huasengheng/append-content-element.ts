@@ -1,18 +1,15 @@
+import { FONT_SIZE } from "./models/font-size.model";
+
 export function appendContentElement({
   fontColor = "#000",
+  fontSize = FONT_SIZE.XXX_LARGE,
   text = "N/A",
   topDs = 0,
 }) {
   const template = document.createElement("template");
   template.innerHTML = `
-        <div class="textBlock" style="
-            color: rgb(15, 177, 83);
-            position: fixed;
-            font-size: xxx-large;
+        <div class="textBlock chrome-fixed chrome-font-${fontSize}" style="
             top: ${topDs}rem;
-            right: 1rem;
-            z-index: 99999;
-            background-color:white;
     "><span class="textColor01 textPricing" style="color: ${fontColor};">${text}</span></div>
     `;
 
