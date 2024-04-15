@@ -11,7 +11,11 @@ import { currentThaiTime } from "../utils/current-thai-time";
 import { FOCUS_TYPE } from "./models/focus-type.model";
 import { FONT_COLOR } from "./models/font-color.model";
 import { FONT_SIZE } from "./models/font-size.model";
+import { speakWithSpeechSynthesis } from "../utils/speak-with-speech-synthesis";
 
+interface TransactionHistory {
+  totalPrice: number;
+}
 export function subscribePriceChannel({
   focusObj = [],
 }: {
@@ -22,90 +26,73 @@ export function subscribePriceChannel({
   const huasenghengSellInPriceEl =
     document.querySelector<HTMLElement>("#ask965");
 
+  const transactionHistory: TransactionHistory[][] = [];
+
   if (focusObj.length && huasenghengSellInPriceEl && huasenghengBuyInPriceEl) {
-    const typeSets = new Set(focusObj.map((obj) => obj.type));
-    const contentChanges$ = from(typeSets).pipe(
-      mergeMap((focusType) => {
-        if (focusType === FOCUS_TYPE.WANT_TO_BUY) {
-          return watchContentChanges(huasenghengSellInPriceEl);
-        } else if (focusType === FOCUS_TYPE.WANT_TO_SELL) {
-          return watchContentChanges(huasenghengBuyInPriceEl);
-        }
-        return NEVER;
-      })
-    );
+    // sell price change then buy price always change
 
     let cleanups: (() => void)[] = [];
-    const subscription = contentChanges$.subscribe(() => {
+    const subscription = watchContentChanges(
+      huasenghengSellInPriceEl
+    ).subscribe(() => {
+      // speakWithSpeechSynthesis(huasenghengBuyInPriceEl.innerText);
+      console.log(`${currentThaiTime()} ${huasenghengBuyInPriceEl.innerText}`);
       cleanupAll(cleanups);
       let topDs = 0;
       let sumPrice = 0;
-      for (const {
-        owner,
-        price: focusPrice,
-        weight: focusWeight,
-        type,
-      } of focusObj) {
-        let textPrice = "0";
-        if (type === FOCUS_TYPE.WANT_TO_BUY) {
-          textPrice = huasenghengSellInPriceEl.innerText;
-        } else if (type === FOCUS_TYPE.WANT_TO_SELL) {
-          textPrice = huasenghengBuyInPriceEl.innerText;
+      const transactions: TransactionHistory[] = [];
+      focusObj.forEach(
+        ({ owner, price: focusPrice, weight: focusWeight, type }, index) => {
+          let textPrice = "0";
+          if (type === FOCUS_TYPE.WANT_TO_BUY) {
+            textPrice = huasenghengSellInPriceEl.innerText;
+          } else if (type === FOCUS_TYPE.WANT_TO_SELL) {
+            textPrice = huasenghengBuyInPriceEl.innerText;
+          }
+          const currentPrice = currencyToNum(textPrice);
+
+          topDs += 1;
+
+          const diffPrice = currentPrice - focusPrice;
+          const totalPrice = diffPrice * focusWeight;
+          const { prefix, fontColor } = priceTypography(diffPrice, type);
+
+          if (diffPrice === 0) {
+            speakWithSpeechSynthesis(`ราคาเท่าทุน`);
+          } else if (diffPrice > 0) {
+            const lastTranscation =
+              transactionHistory[transactionHistory.length - 1]?.[index];
+            let spokenMessage = `กำไร`;
+            if (lastTranscation) {
+              if (lastTranscation.totalPrice > totalPrice) {
+                spokenMessage = `ลดลง ${spokenMessage}`;
+              } else {
+                spokenMessage = `เพิ่มขึ้น ${spokenMessage}`;
+              }
+            }
+            speakWithSpeechSynthesis(`${spokenMessage} ${totalPrice}`);
+          }
+
+          transactions.push({
+            totalPrice,
+          });
+
+          sumPrice += totalPrice;
+          const element = appendContentElement({
+            topDs,
+            fontColor,
+            text: `${owner} ${prefix}${diffPrice} ${prefix}${formatCurrencyWithoutSymbol(
+              totalPrice
+            )}/${focusWeight} ${
+              type === FOCUS_TYPE.WANT_TO_BUY ? "รอซื้อ" : "รอขาย"
+            }`,
+          });
+          topDs += 3;
+          cleanups.push(() => element && element.remove());
         }
-        console.log(`${currentThaiTime()} ${textPrice}`);
-        const currentPrice = currencyToNum(textPrice);
-
-        topDs += 1;
-
-        const diffPrice = currentPrice - focusPrice;
-        const totalPrice = diffPrice * focusWeight;
-        const { prefix, fontColor } = priceTypography(diffPrice, type);
-
-        sumPrice += totalPrice;
-        const element = appendContentElement({
-          topDs,
-          fontColor,
-          text: `${owner} ${prefix}${diffPrice} ${prefix}${formatCurrencyWithoutSymbol(
-            totalPrice
-          )}/${focusWeight} ${
-            type === FOCUS_TYPE.WANT_TO_BUY ? "รอซื้อ" : "รอขาย"
-          }`,
-        });
-        topDs += 3;
-        cleanups.push(() => element && element.remove());
-      }
-
-      // summarize profits
-      // topDs += 1;
-      // const { fontColor: sumPriceFontColor, prefix: sumPricePrefix } =
-      //   priceTypography(sumPrice);
-      // const element = appendContentElement({
-      //   topDs,
-      //   fontColor: sumPriceFontColor,
-      //   text: `∑ ${sumPricePrefix}${formatCurrencyWithoutSymbol(sumPrice)}`,
-      // });
-      // topDs += 3;
-
-      topDs += 1;
-      const huasenghengBuyInPrice = currencyToNum(
-        huasenghengBuyInPriceEl.innerText
       );
-      const huasenghengSellInPrice = currencyToNum(
-        huasenghengSellInPriceEl.innerText
-      );
-      const tradingGap = huasenghengSellInPrice - huasenghengBuyInPrice;
-      const nextBuyInPrice = huasenghengBuyInPrice - tradingGap;
-      const element = appendContentElement({
-        topDs,
-        fontColor: FONT_COLOR.RED_COLOR,
-        fontSize: FONT_SIZE.X_LARGE,
-        text: `*ถ้าขายตอนนี้ รอบหน้าต้องซื้อในราคาต่ำกว่า ${formatCurrencyWithoutSymbol(
-          nextBuyInPrice
-        )}`,
-      });
-      topDs += 3;
 
-      cleanups.push(() => element && element.remove());
+      transactionHistory.push(transactions);
     });
     return subscription.unsubscribe.bind(subscription);
   }
