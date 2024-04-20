@@ -11,6 +11,10 @@
       "matches": ["https://www.huasengheng.com/*"],
       "css": ["content-scripts/huasengheng/huasengheng.css"],
       "js": ["content-scripts/huasengheng/huasengheng.ts"]
+    },
+    {
+      "matches": ["https://s.tradingview.com/widgetembed/*"],
+      "js": ["content-scripts/tradingview/tradingview.ts"]
     }
   ],
   "action": {
