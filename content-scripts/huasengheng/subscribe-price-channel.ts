@@ -9,8 +9,6 @@ import { formatCurrencyWithoutSymbol } from "../utils/format-currency-without-sy
 import { priceTypography } from "./price-typography";
 import { currentThaiTime } from "../utils/current-thai-time";
 import { FOCUS_TYPE } from "./models/focus-type.model";
-import { FONT_COLOR } from "./models/font-color.model";
-import { FONT_SIZE } from "./models/font-size.model";
 import { speakWithSpeechSynthesis } from "../utils/speak-with-speech-synthesis";
 
 interface TransactionHistory {
@@ -38,7 +36,6 @@ export function subscribePriceChannel({
       // speakWithSpeechSynthesis(huasenghengBuyInPriceEl.innerText);
       console.log(`${currentThaiTime()} ${huasenghengBuyInPriceEl.innerText}`);
       cleanupAll(cleanups);
-      let topDs = 0;
       let sumPrice = 0;
       const transactions: TransactionHistory[] = [];
       focusObj.forEach(
@@ -50,27 +47,32 @@ export function subscribePriceChannel({
             textPrice = huasenghengBuyInPriceEl.innerText;
           }
           const currentPrice = currencyToNum(textPrice);
-
-          topDs += 1;
-
           const diffPrice = currentPrice - focusPrice;
           const totalPrice = diffPrice * focusWeight;
           const { prefix, fontColor } = priceTypography(diffPrice, type);
 
-          if (diffPrice === 0) {
-            speakWithSpeechSynthesis(`ราคาเท่าทุน`);
-          } else if (diffPrice > 0) {
-            const lastTranscation =
-              transactionHistory[transactionHistory.length - 1]?.[index];
-            let spokenMessage = `กำไร`;
-            if (lastTranscation) {
-              if (lastTranscation.totalPrice > totalPrice) {
-                spokenMessage = `ลดลง ${spokenMessage}`;
-              } else {
-                spokenMessage = `เพิ่มขึ้น ${spokenMessage}`;
+          if (type === FOCUS_TYPE.WANT_TO_SELL) {
+            if (diffPrice === 0) {
+              speakWithSpeechSynthesis(`ราคาเท่าทุน`);
+            } else if (diffPrice > 0) {
+              const lastTranscation =
+                transactionHistory[transactionHistory.length - 1]?.[index];
+              let spokenMessage = `กำไร`;
+              if (lastTranscation) {
+                if (lastTranscation.totalPrice > totalPrice) {
+                  spokenMessage = `ลดลง ${spokenMessage}`;
+                } else {
+                  spokenMessage = `เพิ่มขึ้น ${spokenMessage}`;
+                }
               }
+              speakWithSpeechSynthesis(`${spokenMessage} ${totalPrice}`);
             }
-            speakWithSpeechSynthesis(`${spokenMessage} ${totalPrice}`);
+          } else {
+            if (diffPrice === 0) {
+              speakWithSpeechSynthesis(`ราคาถึงเป้า`);
+            } else if (diffPrice < 0) {
+              speakWithSpeechSynthesis(`ถูกกว่าเป้า ${diffPrice}`);
+            }
           }
 
           transactions.push({
@@ -79,15 +81,15 @@ export function subscribePriceChannel({
 
           sumPrice += totalPrice;
           const element = appendContentElement({
-            topDs,
             fontColor,
-            text: `${owner} ${prefix}${diffPrice} ${prefix}${formatCurrencyWithoutSymbol(
+            text: `${owner} ${formatCurrencyWithoutSymbol(
+              focusPrice
+            )} ${prefix}${diffPrice} ${prefix}${formatCurrencyWithoutSymbol(
               totalPrice
             )}/${focusWeight} ${
               type === FOCUS_TYPE.WANT_TO_BUY ? "รอซื้อ" : "รอขาย"
             }`,
           });
-          topDs += 3;
           cleanups.push(() => element && element.remove());
         }
       );

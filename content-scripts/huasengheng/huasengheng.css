@@ -1,6 +1,7 @@
 .chrome-fixed {
   position: fixed;
   right: 1rem;
+  top: 1rem;
   z-index: 99999;
   background-color: white;
 }
