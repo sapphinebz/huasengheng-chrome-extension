@@ -14,7 +14,8 @@
     },
     {
       "matches": ["https://s.tradingview.com/widgetembed/*"],
-      "js": ["content-scripts/tradingview/tradingview.ts"]
+      "js": ["content-scripts/tradingview/trading-view.ts"],
+      "css": ["content-scripts/tradingview/trading-view.css"]
     }
   ],
   "action": {

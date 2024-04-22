@@ -15,8 +15,11 @@ import {
   switchMap,
   tap,
 } from "rxjs/operators";
-import { watchContentChanges } from "../utils/watch-content-changes";
 import { watchUntilExist } from "../utils/watch-until-exist";
+import { receiveTransactionsFromSW } from "../huasengheng/receive-transactions-from-sw";
+import { displayTranscation } from "../huasengheng/display-transaction";
+
+receiveTransactionsFromSW().pipe(displayTranscation()).subscribe();
 
 watchUntilExist(500, () =>
   document.querySelector<HTMLDivElement>("[data-status]")

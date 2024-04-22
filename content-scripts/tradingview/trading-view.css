@@ -1,7 +1,7 @@
 .chrome-fixed {
   position: fixed;
-  right: 1rem;
-  top: calc(50px + 1rem);
+  right: 5rem;
+  top: calc(38px + 1rem);
   z-index: 99999;
   background-color: rgb(2 48 74);
   padding: 0.5rem;
@@ -9,5 +9,5 @@
 }
 
 .chrome-font {
-  font-size: x-large;
+  font-size: medium;
 }
