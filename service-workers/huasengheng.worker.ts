@@ -26,7 +26,6 @@ const tradingViewTabId$ = new ReplaySubject<number>(1);
 const transactionsRecords$ = new ReplaySubject<TransactionChange>(1);
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log(message, sender);
   if (sender.url?.startsWith("https://www.huasengheng.com")) {
     transactionsRecords$.next(message);
   } else if (sender.url?.startsWith("https://s.tradingview.com/")) {
