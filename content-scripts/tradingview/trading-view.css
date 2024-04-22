@@ -11,3 +11,39 @@
 .chrome-font {
   font-size: medium;
 }
+
+.chrome-hua-fixed {
+  position: fixed;
+  right: 5rem;
+  top: 0rem;
+  z-index: 99999;
+  background-color: rgb(2 48 74);
+  padding: 0.5rem;
+  border-radius: 0.45rem;
+  display: flex;
+  column-gap: 1rem;
+}
+
+.chrome-hua-font {
+  font-size: medium;
+}
+
+.chrome-hua-header-buy {
+  color: #fc1940;
+  font-weight: bold;
+}
+
+.chrome-hua-header-sell {
+  color: #0fb153;
+  font-weight: bold;
+}
+
+.chrome-hua-value-buy {
+  color: white;
+  font-weight: bold;
+}
+
+.chrome-hua-value-sell {
+  color: white;
+  font-weight: bold;
+}

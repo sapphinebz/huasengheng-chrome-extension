@@ -4,6 +4,7 @@ import { TranscationRecord } from "./models/transaction-record.model";
 import { FOCUS_TYPE } from "./models/focus-type.model";
 import { currencyToNum } from "../utils/currency-to-num";
 import { watchContentChanges } from "../utils/watch-content-changes";
+import { TransactionChange } from "./models/transaction-change.model";
 
 export function transactionChanges({
   focusObj = [],
@@ -15,7 +16,7 @@ export function transactionChanges({
   const huasenghengSellInPriceEl =
     document.querySelector<HTMLElement>("#ask965");
   if (focusObj.length && huasenghengSellInPriceEl && huasenghengBuyInPriceEl) {
-    return new Observable<TranscationRecord[]>((subscriber) => {
+    return new Observable<TransactionChange>((subscriber) => {
       const subscription = watchContentChanges(
         huasenghengSellInPriceEl
       ).subscribe(() => {
@@ -39,7 +40,11 @@ export function transactionChanges({
           };
           return record;
         });
-        subscriber.next(records);
+        subscriber.next({
+          huasenghengBuy: currencyToNum(huasenghengBuyInPriceEl.innerText),
+          huasenghengSell: currencyToNum(huasenghengSellInPriceEl.innerText),
+          transactions: records,
+        });
       });
 
       return subscription;

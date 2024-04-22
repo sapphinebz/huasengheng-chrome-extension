@@ -1,4 +1,5 @@
 /// <reference types="chrome-types" />
+import { map } from "rxjs/operators";
 import { displayTranscation } from "./display-transaction";
 import { FOCUS_TYPE } from "./models/focus-type.model";
 import { sendTransactionsToSW } from "./send-transactions-to-sw";
@@ -25,7 +26,18 @@ transactionChanges({
       price: 41690,
       weight: 5,
     },
+    {
+      type: FOCUS_TYPE.WANT_TO_SELL,
+      owner: "ธนดิตถ์",
+      price: 41430,
+      weight: 14.9386,
+    },
   ],
 })
-  .pipe(displayTranscation(), speakAtThePeak(), sendTransactionsToSW())
+  .pipe(
+    sendTransactionsToSW(),
+    map((changes) => changes.transactions),
+    displayTranscation(),
+    speakAtThePeak()
+  )
   .subscribe();

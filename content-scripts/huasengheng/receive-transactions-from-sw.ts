@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { TranscationRecord } from "./models/transaction-record.model";
+import { TransactionChange } from "./models/transaction-change.model";
 export const TRANSACTION_CHANGES_RECEVING = "transactionChangesReceiving";
 
 export function receiveTransactionsFromSW() {
@@ -7,8 +7,8 @@ export function receiveTransactionsFromSW() {
     name: TRANSACTION_CHANGES_RECEVING,
   });
 
-  return new Observable<TranscationRecord[]>((subscriber) => {
-    const callback = (records: TranscationRecord[]) => {
+  return new Observable<TransactionChange>((subscriber) => {
+    const callback = (records: TransactionChange) => {
       subscriber.next(records);
     };
     port.onMessage.addListener(callback);

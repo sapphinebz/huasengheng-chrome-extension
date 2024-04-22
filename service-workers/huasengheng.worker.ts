@@ -1,9 +1,9 @@
 /// <reference types="chrome-types" />
 
-import { BehaviorSubject } from "rxjs";
+import { ReplaySubject } from "rxjs";
 import { TRANSACTION_CHANGES_INCOMING } from "../content-scripts/huasengheng/send-transactions-to-sw";
-import { TranscationRecord } from "../content-scripts/huasengheng/models/transaction-record.model";
 import { TRANSACTION_CHANGES_RECEVING } from "../content-scripts/huasengheng/receive-transactions-from-sw";
+import { TransactionChange } from "../content-scripts/huasengheng/models/transaction-change.model";
 
 console.log("service worker");
 chrome.runtime.onInstalled.addListener(() => {
@@ -23,10 +23,10 @@ chrome.action.onClicked.addListener(async (tab) => {
   }
 });
 
-const transactionsRecords$ = new BehaviorSubject<TranscationRecord[]>([]);
+const transactionsRecords$ = new ReplaySubject<TransactionChange>(1);
 chrome.runtime.onConnect.addListener(function (port) {
   if (port.name === TRANSACTION_CHANGES_INCOMING) {
-    port.onMessage.addListener((records: TranscationRecord[]) => {
+    port.onMessage.addListener((records: TransactionChange) => {
       transactionsRecords$.next(records);
     });
   } else if (port.name === TRANSACTION_CHANGES_RECEVING) {
