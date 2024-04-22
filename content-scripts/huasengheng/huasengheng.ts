@@ -5,6 +5,7 @@ import { FOCUS_TYPE } from "./models/focus-type.model";
 import { sendTransactionsToSW } from "./send-transactions-to-sw";
 import { speakAtThePeak } from "./speak-at-the-peak";
 import { transactionChanges } from "./transaction-changes";
+import { WEIGHT_UNIT } from "./models/weight-unit.model";
 
 transactionChanges({
   focusObj: [
@@ -31,6 +32,7 @@ transactionChanges({
       owner: "ธนดิตถ์",
       price: 41430,
       weight: 14.9386,
+      unit: WEIGHT_UNIT.GRAM,
     },
   ],
 })
