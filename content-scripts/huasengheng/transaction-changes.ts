@@ -7,6 +7,7 @@ import { watchContentChanges } from "../utils/watch-content-changes";
 import { TransactionChange } from "./models/transaction-change.model";
 import { WEIGHT_UNIT } from "./models/weight-unit.model";
 import { gramToBaht } from "../utils/gram-to-baht";
+import { transparentWeight } from "../utils/transparent-weight";
 
 export function transactionChanges({
   focusObj = [],
@@ -39,7 +40,7 @@ export function transactionChanges({
             price,
             totalPrice,
             type,
-            weight,
+            weight: weightInBaht,
           };
           return record;
         });
@@ -54,11 +55,4 @@ export function transactionChanges({
     });
   }
   return NEVER;
-}
-
-function transparentWeight(weight: number, unit?: WEIGHT_UNIT) {
-  if (unit === WEIGHT_UNIT.GRAM) {
-    return gramToBaht(weight);
-  }
-  return weight;
 }
