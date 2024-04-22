@@ -20,6 +20,8 @@ import { watchUntilExist } from "../utils/watch-until-exist";
 import { receiveTransactionsFromSW } from "../huasengheng/receive-transactions-from-sw";
 import { displayTranscation } from "../huasengheng/display-transaction";
 import { displayHuasenghengBuySell } from "../huasengheng/display-huasengheng-buy-sell";
+import { TransactionChange } from "../huasengheng/models/transaction-change.model";
+console.log("trading-view ready");
 
 const transactionChange$ = receiveTransactionsFromSW().pipe(share());
 

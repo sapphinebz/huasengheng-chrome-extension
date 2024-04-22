@@ -1,20 +1,16 @@
 import { Observable } from "rxjs";
 import { TransactionChange } from "./models/transaction-change.model";
+import { currentThaiTime } from "../utils/current-thai-time";
 export const TRANSACTION_CHANGES_RECEVING = "transactionChangesReceiving";
 
 export function receiveTransactionsFromSW() {
-  const port = chrome.runtime.connect(chrome.runtime.id, {
-    name: TRANSACTION_CHANGES_RECEVING,
-  });
-
   return new Observable<TransactionChange>((subscriber) => {
-    const callback = (records: TransactionChange) => {
+    // say hi
+    chrome.runtime.sendMessage({ name: "tradingView" });
+    chrome.runtime.onMessage.addListener((records: TransactionChange) => {
+      console.log(`sw`, records, `${currentThaiTime()}`);
       subscriber.next(records);
-    };
-    port.onMessage.addListener(callback);
-
-    return () => {
-      port.onMessage.removeListener(callback);
-    };
+      return undefined;
+    });
   });
 }
