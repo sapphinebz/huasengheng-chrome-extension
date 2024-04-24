@@ -10,26 +10,37 @@ export function displayTranscation(): MonoTypeOperatorFunction<
   TranscationRecord[]
 > {
   let subscription: Subscription;
-  return tap((records) => {
-    if (subscription) {
+  const cleanup = () => {
+    if (subscription && !subscription.closed) {
       subscription.unsubscribe();
     }
-    subscription = new Subscription();
-    records.forEach((record) => {
-      const { owner, price, diffPrice, type, totalPrice, weight } = record;
-      const { prefix, fontColor } = priceTypography(diffPrice, type);
-      const element = appendContentElement({
-        fontColor,
-        text: `${owner} ${formatCurrencyWithoutSymbol(
-          price
-        )} ${prefix}${diffPrice} ${prefix}${formatCurrencyWithoutSymbol(
-          totalPrice
-        )}/${weight} ${type === FOCUS_TYPE.WANT_TO_BUY ? "รอซื้อ" : "รอขาย"}`,
-      });
+  };
+  return tap({
+    next: (records) => {
+      cleanup();
+      subscription = new Subscription();
+      records.forEach((record) => {
+        const { owner, price, diffPrice, type, totalPrice, weight } = record;
+        const { prefix, fontColor } = priceTypography(diffPrice, type);
+        const element = appendContentElement({
+          fontColor,
+          text: `${owner} ${formatCurrencyWithoutSymbol(
+            price
+          )} ${prefix}${diffPrice} ${prefix}${formatCurrencyWithoutSymbol(
+            totalPrice
+          )}/${weight} ${type === FOCUS_TYPE.WANT_TO_BUY ? "รอซื้อ" : "รอขาย"}`,
+        });
 
-      subscription.add(() => {
-        element && element.remove();
+        subscription.add(() => {
+          element && element.remove();
+        });
       });
-    });
+    },
+    unsubscribe: () => {
+      cleanup();
+    },
+    complete: () => {
+      cleanup();
+    },
   });
 }
