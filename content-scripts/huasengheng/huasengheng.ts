@@ -34,6 +34,13 @@ transactionChanges({
       weight: 14.9386,
       unit: WEIGHT_UNIT.GRAM,
     },
+    {
+      type: FOCUS_TYPE.WANT_TO_SELL,
+      owner: "ธนดิตถ์",
+      price: 40910,
+      weight: 1.5278,
+      unit: WEIGHT_UNIT.GRAM,
+    },
   ],
 })
   .pipe(

@@ -1,26 +1,8 @@
-import {
-  MonoTypeOperatorFunction,
-  Observable,
-  OperatorFunction,
-  fromEvent,
-  merge,
-  pipe,
-} from "rxjs";
-import {
-  connect,
-  distinctUntilChanged,
-  filter,
-  map,
-  scan,
-  share,
-  switchMap,
-  tap,
-} from "rxjs/operators";
-import { watchUntilExist } from "../utils/watch-until-exist";
-import { transactionsChangesFromSW } from "../huasengheng/receive-transactions-from-sw";
-import { displayTranscation } from "../huasengheng/display-transaction";
+import { distinctUntilChanged, map, share, tap } from "rxjs/operators";
 import { displayHuasenghengBuySell } from "../huasengheng/display-huasengheng-buy-sell";
-import { TransactionChange } from "../huasengheng/models/transaction-change.model";
+import { displayTranscation } from "../huasengheng/display-transaction";
+import { transactionsChangesFromSW } from "../huasengheng/receive-transactions-from-sw";
+import { currentThaiTime } from "../utils/current-thai-time";
 console.log("trading-view ready");
 
 const transactionChange$ = transactionsChangesFromSW().pipe(
@@ -29,6 +11,9 @@ const transactionChange$ = transactionsChangesFromSW().pipe(
       curr.huasenghengBuy === prev.huasenghengBuy &&
       curr.huasenghengSell === prev.huasenghengSell
   ),
+  tap((records) => {
+    console.log(`sw`, records, `${currentThaiTime()}`);
+  }),
   share()
 );
 

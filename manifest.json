@@ -13,7 +13,10 @@
       "js": ["content-scripts/huasengheng/huasengheng.ts"]
     },
     {
-      "matches": ["https://s.tradingview.com/widgetembed/*"],
+      "matches": [
+        "https://s.tradingview.com/widgetembed/*",
+        "https://www.tradingview.com/chart/*"
+      ],
       "js": ["content-scripts/tradingview/trading-view.ts"],
       "css": ["content-scripts/tradingview/trading-view.css"]
     }

@@ -1,7 +1,6 @@
 import { Observable, Subject, timer } from "rxjs";
 import { switchMap } from "rxjs/operators";
 import { TransactionChange } from "./models/transaction-change.model";
-import { currentThaiTime } from "../utils/current-thai-time";
 export const TRANSACTION_CHANGES_RECEVING = "transactionChangesReceiving";
 
 export function transactionsChangesFromSW() {
@@ -19,7 +18,6 @@ export function transactionsChangesFromSW() {
 
     subscriber.add(suptime);
     const callback = (records: TransactionChange) => {
-      console.log(`sw`, records, `${currentThaiTime()}`);
       subscriber.next(records);
       onUpdated.next();
       return undefined;
