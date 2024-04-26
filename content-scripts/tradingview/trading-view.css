@@ -1,3 +1,7 @@
+.chrome-hide {
+  visibility: hidden !important;
+}
+
 .chrome-fixed {
   position: fixed;
   right: 5rem;

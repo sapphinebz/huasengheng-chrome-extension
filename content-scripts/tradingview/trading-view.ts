@@ -1,21 +1,38 @@
-import { distinctUntilChanged, map, share, tap } from "rxjs/operators";
+import { distinctUntilChanged, filter, map, share, tap } from "rxjs/operators";
 import { displayHuasenghengBuySell } from "../huasengheng/display-huasengheng-buy-sell";
 import { displayTranscation } from "../huasengheng/display-transaction";
-import { transactionsChangesFromSW } from "../huasengheng/receive-transactions-from-sw";
+
 import { currentThaiTime } from "../utils/current-thai-time";
+import { fromSWMessage } from "../utils/from-sw-message";
+import { filterTransactions } from "../utils/filter-transactions";
+import { distinctTransactions } from "../utils/distinct-transactions";
 console.log("trading-view ready");
 
-const transactionChange$ = transactionsChangesFromSW().pipe(
-  distinctUntilChanged(
-    (prev, curr) =>
-      curr.huasenghengBuy === prev.huasenghengBuy &&
-      curr.huasenghengSell === prev.huasenghengSell
-  ),
+const serviceWorkerMSG$ = fromSWMessage().pipe(share());
+
+const transactionChange$ = serviceWorkerMSG$.pipe(
+  filterTransactions(),
+  distinctTransactions(),
   tap((records) => {
     console.log(`sw`, records, `${currentThaiTime()}`);
   }),
   share()
 );
+
+serviceWorkerMSG$
+  .pipe(filter((event) => "badgeText" in event))
+  .subscribe((event) => {
+    const nodeAll = document.querySelectorAll<HTMLElement>(
+      ".chrome-hua-fixed, .chrome-fixed"
+    );
+    for (const node of nodeAll) {
+      if (event.badgeText === "ON") {
+        node.classList.remove("chrome-hide");
+      } else {
+        node.classList.add("chrome-hide");
+      }
+    }
+  });
 
 transactionChange$
   .pipe(

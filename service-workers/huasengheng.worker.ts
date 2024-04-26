@@ -22,12 +22,18 @@ chrome.action.onClicked.addListener(async (tab) => {
     tab.url?.startsWith("https://s.tradingview.com/") ||
     tab.url?.startsWith("https://www.tradingview.com/chart")
   ) {
-    const prevState = await chrome.action.getBadgeText({ tabId: tab.id });
-    const nextState = prevState === "ON" ? "OFF" : "ON";
-    await chrome.action.setBadgeText({
-      tabId: tab.id,
-      text: nextState,
-    });
+    const tabId = tab.id;
+    if (tabId) {
+      const prevState = await chrome.action.getBadgeText({ tabId });
+      const nextState = prevState === "ON" ? "OFF" : "ON";
+      await chrome.action.setBadgeText({
+        tabId: tab.id,
+        text: nextState,
+      });
+      await chrome.tabs.sendMessage(tabId, {
+        badgeText: nextState,
+      });
+    }
   }
 });
 

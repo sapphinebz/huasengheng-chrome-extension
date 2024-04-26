@@ -1,24 +1,24 @@
 import { Observable, Subject, timer } from "rxjs";
 import { switchMap } from "rxjs/operators";
-import { TransactionChange } from "./models/transaction-change.model";
 export const TRANSACTION_CHANGES_RECEVING = "transactionChangesReceiving";
 
-export function transactionsChangesFromSW() {
-  return new Observable<TransactionChange>((subscriber) => {
+export function fromSWMessage() {
+  const initialMessage = { name: "hello" };
+  return new Observable<any>((subscriber) => {
     // say hi
-    chrome.runtime.sendMessage({ name: "tradingView" });
+    chrome.runtime.sendMessage(initialMessage);
 
-    // timer to keep connections
+    // timer to keep alives connection
     const onUpdated = new Subject<void>();
     const suptime = onUpdated
       .pipe(switchMap(() => timer(10000)))
       .subscribe(() => {
-        chrome.runtime.sendMessage({ name: "tradingView" });
+        chrome.runtime.sendMessage(initialMessage);
       });
 
     subscriber.add(suptime);
-    const callback = (records: TransactionChange) => {
-      subscriber.next(records);
+    const callback = (event: any) => {
+      subscriber.next(event);
       onUpdated.next();
       return undefined;
     };
