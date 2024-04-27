@@ -1,6 +1,6 @@
 import { MonoTypeOperatorFunction, Subscription } from "rxjs";
 import { tap } from "rxjs/operators";
-import { formatCurrencyWithoutSymbol } from "../utils/format-currency-without-symbol";
+import { formatCurrencyWithoutSymbol } from "./format-currency-without-symbol";
 import { TransactionChange } from "../models/transaction-change.model";
 
 const template = document.createElement("template");

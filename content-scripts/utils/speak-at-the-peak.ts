@@ -2,7 +2,7 @@ import { MonoTypeOperatorFunction } from "rxjs";
 import { tap } from "rxjs/operators";
 import { TranscationRecord } from "../models/transaction-record.model";
 import { FOCUS_TYPE } from "../models/focus-type.model";
-import { speakWithSpeechSynthesis } from "../utils/speak-with-speech-synthesis";
+import { speakWithSpeechSynthesis } from "./speak-with-speech-synthesis";
 
 export function speakAtThePeak(): MonoTypeOperatorFunction<
   TranscationRecord[]

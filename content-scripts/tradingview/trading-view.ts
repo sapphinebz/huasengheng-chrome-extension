@@ -1,6 +1,6 @@
 import { distinctUntilChanged, filter, map, share, tap } from "rxjs/operators";
-import { displayHuasenghengBuySell } from "../huasengheng/display-huasengheng-buy-sell";
-import { displayTranscation } from "../huasengheng/display-transaction";
+import { displayHuasenghengBuySell } from "../utils/display-huasengheng-buy-sell";
+import { displayTranscation } from "../utils/display-transaction";
 
 import { fromSWMessage } from "../utils/from-sw-message";
 import { filterTransactions } from "../utils/filter-transactions";

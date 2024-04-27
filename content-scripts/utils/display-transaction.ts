@@ -3,7 +3,7 @@ import { tap } from "rxjs/operators";
 import { TranscationRecord } from "../models/transaction-record.model";
 import { priceTypography } from "./price-typography";
 import { appendContentElement } from "./append-content-element";
-import { formatCurrencyWithoutSymbol } from "../utils/format-currency-without-symbol";
+import { formatCurrencyWithoutSymbol } from "./format-currency-without-symbol";
 import { FOCUS_TYPE } from "../models/focus-type.model";
 
 export function displayTranscation(): MonoTypeOperatorFunction<
