@@ -17,7 +17,7 @@ export function priceTypography(diffPrice: number, focusType: FOCUS_TYPE) {
         ? FONT_COLOR.GREEN_COLOR
         : FONT_COLOR.RED_COLOR;
   } else {
-    fontColor = FONT_COLOR.BLACK_COLOR;
+    fontColor = FONT_COLOR.WHITE_COLOR;
   }
 
   return {
