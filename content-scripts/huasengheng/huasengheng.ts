@@ -13,7 +13,7 @@ enum OWNER {
 }
 
 transactionChanges({
-  focusObj: [
+  focusTrans: [
     {
       type: FOCUS_TYPE.WANT_TO_SELL,
       owner: OWNER.T,
