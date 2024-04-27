@@ -7,7 +7,7 @@ import {
   using,
 } from "rxjs";
 import { filter, map, share, switchMap } from "rxjs/operators";
-import { TransactionChange } from "../content-scripts/huasengheng/models/transaction-change.model";
+import { TransactionChange } from "../models/transaction-change.model";
 
 console.log("service worker");
 chrome.runtime.onInstalled.addListener(() => {

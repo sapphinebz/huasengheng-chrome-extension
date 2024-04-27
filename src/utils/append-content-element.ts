@@ -1,4 +1,4 @@
-import { FONT_SIZE } from "../models/font-size.model";
+import { FONT_SIZE } from "../../models/font-size.model";
 
 let chromeFixedEl: HTMLDivElement;
 

@@ -3,22 +3,22 @@
   "name": "huasengheng-tracker",
   "version": "0.0.1",
   "background": {
-    "service_worker": "./service-workers/huasengheng.worker.ts",
+    "service_worker": "./src/service-workers/huasengheng.worker.ts",
     "type": "module"
   },
   "content_scripts": [
     {
       "matches": ["https://www.huasengheng.com/*"],
-      "css": ["content-scripts/huasengheng/huasengheng.css"],
-      "js": ["content-scripts/huasengheng/huasengheng.ts"]
+      "css": ["src/content-scripts/huasengheng/huasengheng.css"],
+      "js": ["src/content-scripts/huasengheng/huasengheng.ts"]
     },
     {
       "matches": [
         "https://s.tradingview.com/widgetembed/*",
         "https://www.tradingview.com/chart/*"
       ],
-      "js": ["content-scripts/tradingview/trading-view.ts"],
-      "css": ["content-scripts/tradingview/trading-view.css"]
+      "js": ["src/content-scripts/tradingview/trading-view.ts"],
+      "css": ["src/content-scripts/tradingview/trading-view.css"]
     }
   ],
   "action": {
