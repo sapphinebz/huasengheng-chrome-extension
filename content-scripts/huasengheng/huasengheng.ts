@@ -7,36 +7,41 @@ import { speakAtThePeak } from "./speak-at-the-peak";
 import { transactionChanges } from "./transaction-changes";
 import { WEIGHT_UNIT } from "./models/weight-unit.model";
 
+enum OWNER {
+  T = "T",
+  S = "S",
+}
+
 transactionChanges({
   focusObj: [
     {
       type: FOCUS_TYPE.WANT_TO_SELL,
-      owner: "ธนดิตถ์",
+      owner: OWNER.T,
       price: 41990,
       weight: 10,
     },
     {
       type: FOCUS_TYPE.WANT_TO_SELL,
-      owner: "เสาวลักษณ์",
+      owner: OWNER.S,
       price: 41680,
       weight: 5,
     },
     {
       type: FOCUS_TYPE.WANT_TO_SELL,
-      owner: "ธนดิตถ์",
+      owner: OWNER.T,
       price: 41690,
       weight: 5,
     },
     {
       type: FOCUS_TYPE.WANT_TO_SELL,
-      owner: "ธนดิตถ์",
+      owner: OWNER.T,
       price: 41430,
       weight: 14.9386,
       unit: WEIGHT_UNIT.GRAM,
     },
     {
       type: FOCUS_TYPE.WANT_TO_SELL,
-      owner: "ธนดิตถ์",
+      owner: OWNER.T,
       price: 40910,
       weight: 1.5278,
       unit: WEIGHT_UNIT.GRAM,
