@@ -22,13 +22,20 @@ export function displayTranscation(): MonoTypeOperatorFunction<
       records.forEach((record) => {
         const { owner, price, diffPrice, type, totalPrice, weight } = record;
         const { prefix, fontColor } = priceTypography(diffPrice, type);
+        const bahtDiffPrice = `${formatCurrencyWithoutSymbol(
+          price
+        )}(${prefix}${formatCurrencyWithoutSymbol(diffPrice)})`;
+
+        const totalDiffPrice = `${prefix}${formatCurrencyWithoutSymbol(
+          totalPrice
+        )}`;
+
+        const transactionType = `${
+          type === FOCUS_TYPE.WANT_TO_BUY ? "รอซื้อ" : "รอขาย"
+        }`;
         const element = appendContentElement({
           fontColor,
-          text: `${owner} ${formatCurrencyWithoutSymbol(
-            price
-          )} ${prefix}${formatCurrencyWithoutSymbol(totalPrice)} ${
-            type === FOCUS_TYPE.WANT_TO_BUY ? "รอซื้อ" : "รอขาย"
-          }`,
+          text: `${owner} ${bahtDiffPrice} ${totalDiffPrice} ${transactionType}`,
         });
 
         subscription.add(() => {
