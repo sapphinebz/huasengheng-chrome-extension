@@ -11,3 +11,7 @@
 .chrome-font {
   font-size: x-large;
 }
+
+.chrome-hide {
+  visibility: hidden !important;
+}

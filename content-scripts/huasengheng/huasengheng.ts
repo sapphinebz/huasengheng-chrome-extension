@@ -6,6 +6,8 @@ import { sendTransactionsToSW } from "./send-transactions-to-sw";
 import { speakAtThePeak } from "./speak-at-the-peak";
 import { transactionChanges } from "./transaction-changes";
 import { WEIGHT_UNIT } from "../models/weight-unit.model";
+import { fromSWMessage } from "../utils/from-sw-message";
+import { filterBadgeText } from "../utils/filter-badge-text";
 
 enum OWNER {
   T = "T",
@@ -55,3 +57,16 @@ transactionChanges({
     speakAtThePeak()
   )
   .subscribe();
+
+fromSWMessage()
+  .pipe(filterBadgeText())
+  .subscribe((event) => {
+    const nodeAll = document.querySelectorAll<HTMLElement>(".chrome-fixed");
+    for (const node of nodeAll) {
+      if (event.badgeText === "ON") {
+        node.classList.remove("chrome-hide");
+      } else {
+        node.classList.add("chrome-hide");
+      }
+    }
+  });
