@@ -26,9 +26,9 @@ export function displayTranscation(): MonoTypeOperatorFunction<
           fontColor,
           text: `${owner} ${formatCurrencyWithoutSymbol(
             price
-          )} ${prefix}${diffPrice} ${prefix}${formatCurrencyWithoutSymbol(
-            totalPrice
-          )}/${weight} ${type === FOCUS_TYPE.WANT_TO_BUY ? "รอซื้อ" : "รอขาย"}`,
+          )} ${prefix}${formatCurrencyWithoutSymbol(totalPrice)} ${
+            type === FOCUS_TYPE.WANT_TO_BUY ? "รอซื้อ" : "รอขาย"
+          }`,
         });
 
         subscription.add(() => {
