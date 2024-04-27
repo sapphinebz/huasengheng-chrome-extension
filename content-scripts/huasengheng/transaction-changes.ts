@@ -1,10 +1,10 @@
 import { NEVER, Observable } from "rxjs";
-import { FocusedTransaction } from "./models/focus-transaction.model";
-import { TranscationRecord } from "./models/transaction-record.model";
-import { FOCUS_TYPE } from "./models/focus-type.model";
+import { FocusedTransaction } from "../models/focus-transaction.model";
+import { TranscationRecord } from "../models/transaction-record.model";
+import { FOCUS_TYPE } from "../models/focus-type.model";
 import { currencyToNum } from "../utils/currency-to-num";
 import { watchContentChanges } from "../utils/watch-content-changes";
-import { TransactionChange } from "./models/transaction-change.model";
+import { TransactionChange } from "../models/transaction-change.model";
 import { transparentWeight } from "../utils/transparent-weight";
 
 export function transactionChanges({
@@ -25,6 +25,7 @@ export function transactionChanges({
       const subscription = watchContentChanges(
         huasenghengSellInPriceEl
       ).subscribe(() => {
+        focusTrans.sort((a, b) => b.price - a.price);
         const records = focusTrans.map(
           ({ owner, price, weight, type, unit }) => {
             let textPrice = "0";

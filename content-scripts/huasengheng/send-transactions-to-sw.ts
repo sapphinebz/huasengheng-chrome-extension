@@ -1,6 +1,6 @@
 import { MonoTypeOperatorFunction } from "rxjs";
 import { tap } from "rxjs/operators";
-import { TransactionChange } from "./models/transaction-change.model";
+import { TransactionChange } from "../models/transaction-change.model";
 import { currentThaiTime } from "../utils/current-thai-time";
 
 export const TRANSACTION_CHANGES_INCOMING = "transactionChangesIncoming";

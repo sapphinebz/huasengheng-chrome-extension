@@ -1,5 +1,5 @@
-import { FOCUS_TYPE } from "./models/focus-type.model";
-import { FONT_COLOR } from "./models/font-color.model";
+import { FOCUS_TYPE } from "../models/focus-type.model";
+import { FONT_COLOR } from "../models/font-color.model";
 
 export function priceTypography(diffPrice: number, focusType: FOCUS_TYPE) {
   let fontColor: FONT_COLOR = FONT_COLOR.WHITE_COLOR;

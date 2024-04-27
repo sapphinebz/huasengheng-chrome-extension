@@ -1,11 +1,11 @@
 /// <reference types="chrome-types" />
 import { map } from "rxjs/operators";
 import { displayTranscation } from "./display-transaction";
-import { FOCUS_TYPE } from "./models/focus-type.model";
+import { FOCUS_TYPE } from "../models/focus-type.model";
 import { sendTransactionsToSW } from "./send-transactions-to-sw";
 import { speakAtThePeak } from "./speak-at-the-peak";
 import { transactionChanges } from "./transaction-changes";
-import { WEIGHT_UNIT } from "./models/weight-unit.model";
+import { WEIGHT_UNIT } from "../models/weight-unit.model";
 
 enum OWNER {
   T = "T",
