@@ -1,7 +1,8 @@
 import { MonoTypeOperatorFunction } from "rxjs";
 import { tap } from "rxjs/operators";
-import { TransactionChange } from "../../models/transaction-change.model";
+
 import { currentThaiTime } from "./current-thai-time";
+import { TransactionChange } from "../models/transaction-change.model";
 
 export function consoleTableTransactionChanges(): MonoTypeOperatorFunction<TransactionChange> {
   const transactions: { buy: number; sell: number; time: string }[] = [];
