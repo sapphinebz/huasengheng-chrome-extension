@@ -3,17 +3,78 @@
 import {
   MonoTypeOperatorFunction,
   Observable,
+  ReplaySubject,
   combineLatest,
+  connectable,
   using,
 } from "rxjs";
-import { filter, map, share, switchMap } from "rxjs/operators";
+import { filter, share, switchMap } from "rxjs/operators";
+import { FocusedTransaction } from "../models/focus-transaction.model";
+import { FOCUS_TYPE } from "../models/focus-type.model";
 import { TransactionChange } from "../models/transaction-change.model";
-
+import { WEIGHT_UNIT } from "../models/weight-unit.model";
+import { getPriceSchedule, toTransactionChange } from "../utils/fetch-gold";
 console.log("service worker");
+
+const focusTrans: FocusedTransaction[] = [
+  {
+    type: FOCUS_TYPE.WANT_TO_SELL,
+    owner: "T",
+    price: 41990,
+    weight: 10,
+  },
+  {
+    type: FOCUS_TYPE.WANT_TO_SELL,
+    owner: "S",
+    price: 41680,
+    weight: 5,
+  },
+  {
+    type: FOCUS_TYPE.WANT_TO_SELL,
+    owner: "T",
+    price: 41690,
+    weight: 5,
+  },
+  {
+    type: FOCUS_TYPE.WANT_TO_SELL,
+    owner: "T",
+    price: 41430,
+    weight: 14.9386,
+    unit: WEIGHT_UNIT.GRAM,
+  },
+  {
+    type: FOCUS_TYPE.WANT_TO_SELL,
+    owner: "T",
+    price: 40880,
+    weight: 15.4006,
+    unit: WEIGHT_UNIT.GRAM,
+  },
+  {
+    type: FOCUS_TYPE.WANT_TO_SELL,
+    owner: "T",
+    price: 40340,
+    weight: 1,
+  },
+];
+
+const transactionChange$ = connectable(
+  getPriceSchedule({ GoldType: "HSH", period: 3000 }).pipe(
+    toTransactionChange(focusTrans)
+  ),
+  {
+    connector: () => new ReplaySubject(1),
+  }
+);
+
 chrome.runtime.onInstalled.addListener(() => {
   chrome.action.setBadgeText({
     text: "ON",
   });
+
+  transactionChange$.connect();
+  // chrome.tabs.create({
+  //   url: "src/popups/popup.html",
+  // });
 });
 
 chrome.action.onClicked.addListener(async (tab) => {
@@ -72,20 +133,13 @@ function sendTransactionBackTo(
   url: string
 ): MonoTypeOperatorFunction<ContentScriptMessage> {
   return (contentScripts$: Observable<ContentScriptMessage>) => {
-    const huasengheng$ = contentScripts$.pipe(
-      filter(({ senderUrl }) =>
-        senderUrl.startsWith("https://www.huasengheng.com")
-      ),
-      map<ContentScriptMessage, TransactionChange>((ms) => ms.message)
-    );
-
     const target$ = contentScripts$.pipe(
       filter(({ senderUrl }) => senderUrl.startsWith(url))
     );
 
     return using(
       () => {
-        return combineLatest([huasengheng$, target$])
+        return combineLatest([transactionChange$, target$])
           .pipe(
             switchMap(async (source) => {
               const [transactions, { tabId }] = source;
