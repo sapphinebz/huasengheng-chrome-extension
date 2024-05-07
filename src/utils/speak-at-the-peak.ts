@@ -28,10 +28,12 @@ export function speakAtThePeak(): MonoTypeOperatorFunction<
           speakWithSpeechSynthesis(`${spokenMessage} ${totalPrice}`);
         }
       } else {
-        if (diffPrice === 0) {
-          speakWithSpeechSynthesis(`ราคาถึงเป้า`);
+        if (diffPrice <= 30 && diffPrice > 0) {
+          speakWithSpeechSynthesis(`ใกล้ถึงเวลาซื้อได้แล้ว`);
+        } else if (diffPrice === 0) {
+          speakWithSpeechSynthesis(`ซื้อเดี๋ยวนี้`);
         } else if (diffPrice < 0) {
-          speakWithSpeechSynthesis(`ถูกกว่าเป้า ${diffPrice}`);
+          speakWithSpeechSynthesis(`ราคาถูกมาก ซื้อได้แล้ว`);
         }
       }
       index++;
