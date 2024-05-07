@@ -6,6 +6,8 @@ import {
   ReplaySubject,
   combineLatest,
   connectable,
+  from,
+  merge,
   using,
 } from "rxjs";
 import { filter, share, switchMap } from "rxjs/operators";
@@ -14,52 +16,25 @@ import { FOCUS_TYPE } from "../models/focus-type.model";
 import { TransactionChange } from "../models/transaction-change.model";
 import { WEIGHT_UNIT } from "../models/weight-unit.model";
 import { getPriceSchedule, toTransactionChange } from "../utils/fetch-gold";
+import { storageGetTrans } from "../utils/storage-get-trans";
 console.log("service worker");
 
-const focusTrans: FocusedTransaction[] = [
-  {
-    type: FOCUS_TYPE.WANT_TO_SELL,
-    owner: "T",
-    price: 41990,
-    weight: 10,
-  },
-  {
-    type: FOCUS_TYPE.WANT_TO_SELL,
-    owner: "S",
-    price: 41680,
-    weight: 5,
-  },
-  {
-    type: FOCUS_TYPE.WANT_TO_SELL,
-    owner: "T",
-    price: 41690,
-    weight: 5,
-  },
-  {
-    type: FOCUS_TYPE.WANT_TO_SELL,
-    owner: "T",
-    price: 41430,
-    weight: 14.9386,
-    unit: WEIGHT_UNIT.GRAM,
-  },
-  {
-    type: FOCUS_TYPE.WANT_TO_SELL,
-    owner: "T",
-    price: 40880,
-    weight: 15.4006,
-    unit: WEIGHT_UNIT.GRAM,
-  },
-  {
-    type: FOCUS_TYPE.WANT_TO_SELL,
-    owner: "T",
-    price: 40340,
-    weight: 1,
-  },
-];
+const onStorageTransChanged = new Observable<FocusedTransaction[]>(
+  (subscriber) => {
+    chrome.storage.onChanged.addListener((changes, area) => {
+      const list = changes.invests.newValue.list;
+      subscriber.next(list);
+    });
+  }
+);
 
 const transactionChange$ = connectable(
-  getPriceSchedule({ GoldType: "HSH", period: 3000 }).pipe(
-    toTransactionChange(focusTrans)
+  merge(storageGetTrans(), onStorageTransChanged).pipe(
+    switchMap((focusTrans) => {
+      return getPriceSchedule({ GoldType: "HSH", period: 3000 }).pipe(
+        toTransactionChange(focusTrans)
+      );
+    })
   ),
   {
     connector: () => new ReplaySubject(1),
@@ -67,35 +42,35 @@ const transactionChange$ = connectable(
 );
 
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.action.setBadgeText({
-    text: "ON",
-  });
+  // chrome.action.setBadgeText({
+  //   text: "ON",
+  // });
 
   transactionChange$.connect();
-  // chrome.tabs.create({
-  //   url: "src/popups/popup.html",
-  // });
 });
 
 chrome.action.onClicked.addListener(async (tab) => {
-  if (
-    tab.url?.startsWith("https://www.huasengheng.com") ||
-    tab.url?.startsWith("https://s.tradingview.com/") ||
-    tab.url?.startsWith("https://www.tradingview.com/chart")
-  ) {
-    const tabId = tab.id;
-    if (tabId) {
-      const prevState = await chrome.action.getBadgeText({ tabId });
-      const nextState = prevState === "ON" ? "OFF" : "ON";
-      await chrome.action.setBadgeText({
-        tabId: tab.id,
-        text: nextState,
-      });
-      await chrome.tabs.sendMessage(tabId, {
-        badgeText: nextState,
-      });
-    }
-  }
+  chrome.tabs.create({
+    url: "src/popups/popup.html",
+  });
+  // if (
+  //   tab.url?.startsWith("https://www.huasengheng.com") ||
+  //   tab.url?.startsWith("https://s.tradingview.com/") ||
+  //   tab.url?.startsWith("https://www.tradingview.com/chart")
+  // ) {
+  //   const tabId = tab.id;
+  //   if (tabId) {
+  //     const prevState = await chrome.action.getBadgeText({ tabId });
+  //     const nextState = prevState === "ON" ? "OFF" : "ON";
+  //     await chrome.action.setBadgeText({
+  //       tabId: tab.id,
+  //       text: nextState,
+  //     });
+  //     await chrome.tabs.sendMessage(tabId, {
+  //       badgeText: nextState,
+  //     });
+  //   }
+  // }
 });
 
 const contentScript$ = fromContentScript().pipe(share());

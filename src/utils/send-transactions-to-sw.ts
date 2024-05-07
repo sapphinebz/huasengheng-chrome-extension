@@ -7,7 +7,6 @@ export const TRANSACTION_CHANGES_INCOMING = "transactionChangesIncoming";
 
 export function sendTransactionsToSW(): MonoTypeOperatorFunction<TransactionChange> {
   return tap(async (records) => {
-    console.log("postMessage ", records, `${currentThaiTime()}`);
     const response = await chrome.runtime.sendMessage(records);
   });
 }

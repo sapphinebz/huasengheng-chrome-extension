@@ -1,11 +1,9 @@
 import { NEVER, Observable } from "rxjs";
 import { FocusedTransaction } from "../../models/focus-transaction.model";
-import { TranscationRecord } from "../../models/transaction-record.model";
-import { FOCUS_TYPE } from "../../models/focus-type.model";
+import { TransactionChange } from "../../models/transaction-change.model";
+import { convertToTransactionChanges } from "../../utils/convert-to-transaction-changes";
 import { currencyToNum } from "../../utils/currency-to-num";
 import { watchContentChanges } from "../../utils/watch-content-changes";
-import { TransactionChange } from "../../models/transaction-change.model";
-import { transparentWeight } from "../../utils/transparent-weight";
 
 export function transactionChanges({
   focusTrans = [],
@@ -25,34 +23,14 @@ export function transactionChanges({
       const subscription = watchContentChanges(
         huasenghengSellInPriceEl
       ).subscribe(() => {
-        focusTrans.sort((a, b) => b.price - a.price);
-        const records = focusTrans.map(
-          ({ owner, price, weight, type, unit }) => {
-            let textPrice = "0";
-            if (type === FOCUS_TYPE.WANT_TO_BUY) {
-              textPrice = huasenghengSellInPriceEl.innerText;
-            } else if (type === FOCUS_TYPE.WANT_TO_SELL) {
-              textPrice = huasenghengBuyInPriceEl.innerText;
-            }
-            const weightInBaht = transparentWeight(weight, unit);
-            const currentPrice = currencyToNum(textPrice);
-            const diffPrice = currentPrice - price;
-            const totalPrice = diffPrice * weightInBaht;
-            const record: TranscationRecord = {
-              owner,
-              diffPrice,
-              price,
-              totalPrice,
-              type,
-              weight: weightInBaht,
-            };
-            return record;
-          }
-        );
         subscriber.next({
           huasenghengBuy: currencyToNum(huasenghengBuyInPriceEl.innerText),
           huasenghengSell: currencyToNum(huasenghengSellInPriceEl.innerText),
-          transactions: records,
+          transactions: convertToTransactionChanges({
+            focusTrans,
+            sell: huasenghengSellInPriceEl.innerText,
+            buy: huasenghengBuyInPriceEl.innerText,
+          }),
         });
       });
 

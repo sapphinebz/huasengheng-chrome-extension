@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Popup</title>
+    <script type="module" src="./popup.ts"></script>
+  </head>
+  <body>
+    <h1>Invests</h1>
+    <div>
+      <template data-template-add>
+        <tr>
+          <td><input type="text" data-investor /></td>
+          <td><input type="number" data-price /></td>
+          <td><input type="number" data-weight /></td>
+          <td>
+            <select data-type>
+              <option value="sell">want to sell</option>
+              <option value="buy">want to buy</option>
+            </select>
+          </td>
+          <td>
+            <button data-save>save</button>
+          </td>
+        </tr>
+      </template>
+      <template data-template-view>
+        <tr>
+          <td><input type="text" data-investor /></td>
+          <td><input type="number" data-price /></td>
+          <td><input type="number" data-weight /></td>
+          <td>
+            <select data-type>
+              <option value="sell">want to sell</option>
+              <option value="buy">want to buy</option>
+            </select>
+          </td>
+          <td>
+            <button data-remove>remove</button>
+          </td>
+        </tr>
+      </template>
+      <table data-invest-table>
+        <thead>
+          <th>Investor</th>
+          <th>Price</th>
+          <th>Weight</th>
+          <th>Type</th>
+          <th>
+            <button data-add-button>Add</button>
+          </th>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <!-- <div>
+        <div>
+          <span>investor:</span>
+          <span><input type="text" /></span>
+        </div>
+        <div>
+          <span>price:</span>
+          <span><input type="number" /></span>
+        </div>
+        <div>
+          <span>weight:</span>
+          <span><input type="number" /></span>
+        </div>
+        <div>
+          <span>type:</span>
+          <span>
+            <select data-type>
+              <option value="sell">want to sell</option>
+              <option value="buy">want to buy</option>
+            </select>
+          </span>
+        </div>
+      </div> -->
+    </div>
+  </body>
+</html>
