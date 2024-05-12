@@ -48,7 +48,6 @@ export function getPriceSchedule(options: {
   period: number;
 }) {
   return timer(0, options.period).pipe(
-    ignoreWeekend(),
     exhaustMap(() =>
       getPrice().pipe(
         catchError(() => EMPTY),
