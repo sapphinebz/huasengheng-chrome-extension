@@ -1,4 +1,4 @@
-import { EMPTY, OperatorFunction, timer } from "rxjs";
+import { EMPTY, MonoTypeOperatorFunction, OperatorFunction, timer } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
 import {
   catchError,
@@ -48,6 +48,7 @@ export function getPriceSchedule(options: {
   period: number;
 }) {
   return timer(0, options.period).pipe(
+    ignoreWeekend(),
     exhaustMap(() =>
       getPrice().pipe(
         catchError(() => EMPTY),
@@ -59,6 +60,15 @@ export function getPriceSchedule(options: {
     filter((price): price is GetPriceRes => Boolean(price)),
     distinctUntilChanged((prev, cur) => prev.Buy === cur.Buy)
   );
+}
+
+function isWeekend() {
+  const today = new Date();
+  return today.getDay() === 0 || today.getDay() === 6;
+}
+
+export function ignoreWeekend<T>(): MonoTypeOperatorFunction<T> {
+  return filter(() => !isWeekend());
 }
 
 export function toTransactionChange(
