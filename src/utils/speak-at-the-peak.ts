@@ -10,6 +10,7 @@ export function speakAtThePeak(): MonoTypeOperatorFunction<
   let prevTransactions: TranscationRecord[] = [];
   return tap((records) => {
     let index = 0;
+    let readyToBuy = false;
     for (const record of records) {
       const { type, diffPrice, totalPrice } = record;
       if (type === FOCUS_TYPE.WANT_TO_SELL) {
@@ -25,18 +26,17 @@ export function speakAtThePeak(): MonoTypeOperatorFunction<
               spokenMessage = `เพิ่มขึ้น ${spokenMessage}`;
             }
           }
-          speakWithSpeechSynthesis(`${spokenMessage} ${totalPrice}`);
+          speakWithSpeechSynthesis(`${spokenMessage} ${diffPrice}`);
         }
       } else {
-        if (diffPrice <= 30 && diffPrice > 0) {
-          speakWithSpeechSynthesis(`ใกล้ถึงเวลาซื้อได้แล้ว`);
-        } else if (diffPrice === 0) {
-          speakWithSpeechSynthesis(`ซื้อเดี๋ยวนี้`);
-        } else if (diffPrice < 0) {
-          speakWithSpeechSynthesis(`ราคาถูกมาก ซื้อได้แล้ว`);
+        if (diffPrice <= 0) {
+          readyToBuy = true;
         }
       }
       index++;
+    }
+    if (readyToBuy) {
+      speakWithSpeechSynthesis(`ราคาพร้อมทำกำไร`);
     }
     prevTransactions = records;
   });

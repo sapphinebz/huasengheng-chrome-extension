@@ -1,5 +1,12 @@
 import { EMPTY, Subject, from, fromEvent, merge } from "rxjs";
-import { exhaustMap, mergeMap, switchMap, take, tap } from "rxjs/operators";
+import {
+  exhaust,
+  exhaustMap,
+  mergeMap,
+  switchMap,
+  take,
+  tap,
+} from "rxjs/operators";
 import { storageGetTrans } from "../utils/storage-get-trans";
 import { storageSetTrans } from "../utils/storage-set-trans";
 import { FocusedTransaction } from "../models/focus-transaction.model";
@@ -14,10 +21,9 @@ const templateViewEl = document.querySelector<HTMLTemplateElement>(
   "[data-template-view]"
 );
 const buttonEl = tableEl?.querySelector<HTMLButtonElement>("[data-add-button]");
+const onReload = new Subject<void>();
 
 if (tableEl && templateAddEl && buttonEl && tbodyEl && templateViewEl) {
-  const onReload = new Subject<void>();
-
   merge(storageGetTrans(), onReload.pipe(exhaustMap(() => storageGetTrans())))
     .pipe(
       switchMap((list) => {
@@ -119,6 +125,83 @@ if (tableEl && templateAddEl && buttonEl && tbodyEl && templateViewEl) {
               );
             })
           );
+        }
+        return EMPTY;
+      })
+    )
+    .subscribe();
+}
+
+const checkboxExtensionTogglerEl =
+  document.querySelector<HTMLInputElement>("#extension-toggler");
+if (checkboxExtensionTogglerEl) {
+  checkboxExtensionTogglerEl.checked = true;
+  fromEvent(checkboxExtensionTogglerEl, "change")
+    .pipe(
+      switchMap(async () => {
+        const queryOptions = {
+          url: [
+            "https://www.tradingview.com/chart/*",
+            "https://www.huasengheng.com/*",
+          ],
+        };
+        const tabs = await chrome.tabs.query(queryOptions);
+        if (tabs.length > 0) {
+          const enabled = checkboxExtensionTogglerEl.checked;
+          const nextState = enabled ? "ON" : "OFF";
+          for (const tab of tabs) {
+            if (tab.id) {
+              await chrome.tabs.sendMessage(tab.id, {
+                badgeText: nextState,
+              });
+            }
+          }
+        }
+      })
+    )
+    .subscribe();
+}
+
+const saveFiboRetracementBtn = document.querySelector<HTMLButtonElement>(
+  "#save-fibo-retracement"
+);
+
+const highPriceEl = document.querySelector<HTMLInputElement>("#highPrice");
+const lowPriceEl = document.querySelector<HTMLInputElement>("#lowPrice");
+
+if (saveFiboRetracementBtn && highPriceEl && lowPriceEl) {
+  const saveRetracement = () => {
+    const highPrice = highPriceEl.valueAsNumber;
+    const lowPrice = lowPriceEl.valueAsNumber;
+    const diffPrice = highPrice - lowPrice;
+    return storageGetTrans().pipe(
+      switchMap((list) => {
+        const fiboList = [0.236, 0.382, 0.5, 0];
+        for (const fibo of fiboList) {
+          const data = {} as FocusedTransaction;
+          data.type = FOCUS_TYPE.WANT_TO_BUY;
+          data.owner = "T";
+          let fiboPrice = lowPrice + diffPrice * fibo;
+          fiboPrice = Math.round(fiboPrice / 10) * 10;
+          data.price = fiboPrice;
+          data.weight = 1;
+          list.push(data);
+        }
+        return storageSetTrans(list).pipe(
+          tap(() => {
+            highPriceEl.valueAsNumber = 0;
+            lowPriceEl.valueAsNumber = 0;
+            onReload.next();
+          })
+        );
+      })
+    );
+  };
+  fromEvent(saveFiboRetracementBtn, "click")
+    .pipe(
+      exhaustMap(() => {
+        if (highPriceEl.valueAsNumber && lowPriceEl.valueAsNumber) {
+          return saveRetracement();
         }
         return EMPTY;
       })

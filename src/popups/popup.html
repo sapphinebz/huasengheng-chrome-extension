@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Popup</title>
     <script type="module" src="./popup.ts"></script>
+    <link rel="stylesheet" href="./popup.css" />
   </head>
   <body>
     <h1>Invests</h1>
-    <div>
+    <div data-invest-table-container>
       <template data-template-add>
         <tr>
           <td><input type="text" data-investor /></td>
@@ -53,29 +54,30 @@
         </thead>
         <tbody></tbody>
       </table>
-      <!-- <div>
-        <div>
-          <span>investor:</span>
-          <span><input type="text" /></span>
-        </div>
-        <div>
-          <span>price:</span>
-          <span><input type="number" /></span>
-        </div>
-        <div>
-          <span>weight:</span>
-          <span><input type="number" /></span>
-        </div>
-        <div>
-          <span>type:</span>
-          <span>
-            <select data-type>
-              <option value="sell">want to sell</option>
-              <option value="buy">want to buy</option>
-            </select>
-          </span>
-        </div>
-      </div> -->
+    </div>
+    <div data-extension-toggler>
+      <input type="checkbox" name="enabler" id="extension-toggler" />
+      <label for="extension-toggler"> Enable UI </label>
+    </div>
+    <div class="flex-row">
+      <div>
+        <h2>Fibo Retracement</h2>
+      </div>
+      <div>
+        <span>High Price:</span
+        ><span>
+          <input type="number" name="highPrice" id="highPrice" />
+        </span>
+      </div>
+      <div>
+        <span> Low Price: </span>
+        <span>
+          <input type="number" name="lowPrice" id="lowPrice" />
+        </span>
+      </div>
+      <div>
+        <button id="save-fibo-retracement">save</button>
+      </div>
     </div>
   </body>
 </html>
