@@ -132,11 +132,12 @@ if (tableEl && templateAddEl && buttonEl && tbodyEl && templateViewEl) {
     .subscribe();
 }
 
-const checkboxExtensionTogglerEl =
+let state = "ON";
+const UITogglerEl =
   document.querySelector<HTMLInputElement>("#extension-toggler");
-if (checkboxExtensionTogglerEl) {
-  checkboxExtensionTogglerEl.checked = true;
-  fromEvent(checkboxExtensionTogglerEl, "change")
+
+if (UITogglerEl) {
+  fromEvent(UITogglerEl, "click")
     .pipe(
       switchMap(async () => {
         const queryOptions = {
@@ -147,12 +148,12 @@ if (checkboxExtensionTogglerEl) {
         };
         const tabs = await chrome.tabs.query(queryOptions);
         if (tabs.length > 0) {
-          const enabled = checkboxExtensionTogglerEl.checked;
-          const nextState = enabled ? "ON" : "OFF";
+          state = state === "OFF" ? "ON" : "OFF";
+
           for (const tab of tabs) {
             if (tab.id) {
               await chrome.tabs.sendMessage(tab.id, {
-                badgeText: nextState,
+                badgeText: state,
               });
             }
           }

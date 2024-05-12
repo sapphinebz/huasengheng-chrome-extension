@@ -9,6 +9,7 @@
   </head>
   <body>
     <h1>Invests</h1>
+    <h2>Investment Table</h2>
     <div data-invest-table-container>
       <template data-template-add>
         <tr>
@@ -28,11 +29,11 @@
       </template>
       <template data-template-view>
         <tr>
-          <td><input type="text" data-investor /></td>
-          <td><input type="number" data-price /></td>
-          <td><input type="number" data-weight /></td>
+          <td><input disabled type="text" data-investor /></td>
+          <td><input disabled type="number" data-price /></td>
+          <td><input disabled type="number" data-weight /></td>
           <td>
-            <select data-type>
+            <select disabled data-type>
               <option value="sell">want to sell</option>
               <option value="buy">want to buy</option>
             </select>
@@ -55,9 +56,11 @@
         <tbody></tbody>
       </table>
     </div>
-    <div data-extension-toggler>
-      <input type="checkbox" name="enabler" id="extension-toggler" />
-      <label for="extension-toggler"> Enable UI </label>
+
+    <div>
+      <h2>UI</h2>
+      <button id="extension-toggler">toggle UI</button
+      ><span id="current-state"></span>
     </div>
     <div class="flex-row">
       <div>
