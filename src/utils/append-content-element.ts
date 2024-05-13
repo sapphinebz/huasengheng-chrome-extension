@@ -1,4 +1,4 @@
-import { FONT_SIZE } from "../../models/font-size.model";
+import { makeItMovable } from "./make-it-movable";
 
 let chromeFixedEl: HTMLDivElement;
 
@@ -7,6 +7,7 @@ export function appendContentElement({ fontColor = "#000", text = "N/A" }) {
     chromeFixedEl = document.createElement("div");
     chromeFixedEl.classList.add("chrome-fixed");
     chromeFixedEl.classList.add("chrome-font");
+    makeItMovable(chromeFixedEl).subscribe();
     document.body.appendChild(chromeFixedEl);
   }
   const template = document.createElement("template");

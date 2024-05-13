@@ -132,37 +132,6 @@ if (tableEl && templateAddEl && buttonEl && tbodyEl && templateViewEl) {
     .subscribe();
 }
 
-let state = "ON";
-const UITogglerEl =
-  document.querySelector<HTMLInputElement>("#extension-toggler");
-
-if (UITogglerEl) {
-  fromEvent(UITogglerEl, "click")
-    .pipe(
-      switchMap(async () => {
-        const queryOptions = {
-          url: [
-            "https://www.tradingview.com/chart/*",
-            "https://www.huasengheng.com/*",
-          ],
-        };
-        const tabs = await chrome.tabs.query(queryOptions);
-        if (tabs.length > 0) {
-          state = state === "OFF" ? "ON" : "OFF";
-
-          for (const tab of tabs) {
-            if (tab.id) {
-              await chrome.tabs.sendMessage(tab.id, {
-                badgeText: state,
-              });
-            }
-          }
-        }
-      })
-    )
-    .subscribe();
-}
-
 const saveFiboRetracementBtn = document.querySelector<HTMLButtonElement>(
   "#save-fibo-retracement"
 );

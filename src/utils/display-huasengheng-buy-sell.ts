@@ -2,6 +2,7 @@ import { MonoTypeOperatorFunction, Subscription } from "rxjs";
 import { tap } from "rxjs/operators";
 import { formatCurrencyWithoutSymbol } from "./format-currency-without-symbol";
 import { TransactionChange } from "../models/transaction-change.model";
+import { makeItMovable } from "./make-it-movable";
 
 const template = document.createElement("template");
 template.innerHTML = `
@@ -21,6 +22,10 @@ export function displayHuasenghengBuySell(): MonoTypeOperatorFunction<Transactio
   const node = document.importNode(template.content, true);
   const buyEl = node.querySelector<HTMLElement>(".chrome-hua-value-buy");
   const sellEl = node.querySelector<HTMLElement>(".chrome-hua-value-sell");
+  const containerEl = node.querySelector<HTMLElement>(".chrome-hua-fixed");
+  if (containerEl) {
+    makeItMovable(containerEl).subscribe();
+  }
   document.body.appendChild(node);
   return tap((changes) => {
     if (buyEl) {
