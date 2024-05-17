@@ -2,15 +2,18 @@
   visibility: hidden !important;
 }
 
+.chrome-fixed-block {
+  background-color: rgb(2 48 74);
+  padding: 0.5rem;
+  border-radius: 0.45rem;
+  width: fit-content;
+}
+
 .chrome-fixed {
   position: fixed;
   right: 5rem;
   top: calc(38px + 1rem);
   z-index: 99999;
-  background-color: rgb(2 48 74);
-  padding: 0.5rem;
-  border-radius: 0.45rem;
-  width: fit-content;
 }
 
 .chrome-font {
@@ -52,4 +55,8 @@
 .chrome-hua-value-sell {
   color: white;
   font-weight: bold;
+}
+
+.chrome-hidden {
+  display: none;
 }

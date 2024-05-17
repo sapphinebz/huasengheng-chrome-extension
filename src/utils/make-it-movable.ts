@@ -9,9 +9,14 @@ export function makeItMovable<ELEMENT extends HTMLElement>(el: ELEMENT) {
 
   return mousedown$.pipe(
     exhaustMap((downEvent) => {
-      const computedStyle = getComputedStyle(el);
-      const oldTop = Number(computedStyle.top.replace("px", ""));
-      const oldLeft = Number(computedStyle.left.replace("px", ""));
+      el.style.position = "fixed";
+      // const computedStyle = getComputedStyle(el);
+      // const oldTop = Number(computedStyle.top.replace("px", ""));
+      // const oldLeft = Number(computedStyle.left.replace("px", ""));
+      const reactDom = el.getBoundingClientRect();
+      const oldTop = reactDom.top;
+      const oldLeft = reactDom.left;
+
       return mousemove$.pipe(
         tap((moveEvent) => {
           const dx = moveEvent.x - downEvent.x;
