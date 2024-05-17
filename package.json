@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "For tracking gold price profits and helping in making gold trading decisions.",
   "scripts": {
-    "build": "npm run clean && parcel build manifest.json --config @parcel/config-webextension",
+    "build": "npm run clean && parcel build manifest.json --config @parcel/config-webextension && npm run cp-popup",
     "start": "parcel watch manifest.json --host localhost --config @parcel/config-webextension",
-    "clean": "rm -rf dist .parcel-cache"
+    "clean": "rm -rf dist .parcel-cache",
+    "cp-popup": "cp /Users/thanaditbuthong/Applications/ChromeExtension/huasengheng-tracker-extension/src/popups/popup.html /Users/thanaditbuthong/Applications/ChromeExtension/huasengheng-tracker-extension/dist"
   },
   "keywords": [
     "huasengheng",
@@ -14,10 +15,14 @@
   "author": "Thanadit Buthong",
   "license": "ISC",
   "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@parcel/config-webextension": "^2.12.0",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
     "chrome-types": "^0.1.277",
     "parcel": "^2.12.0"
   }

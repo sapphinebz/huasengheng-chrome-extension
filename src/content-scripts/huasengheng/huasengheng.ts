@@ -3,7 +3,7 @@ import { map } from "rxjs/operators";
 
 import { FOCUS_TYPE } from "../../models/focus-type.model";
 import { sendTransactionsToSW } from "../../utils/send-transactions-to-sw";
-import { displayTranscation } from "../../utils/display-transaction";
+// import { displayTranscation } from "../../utils/display-transaction";
 import { speakAtThePeak } from "../../utils/speak-at-the-peak";
 import { transactionChanges } from "./transaction-changes";
 import { WEIGHT_UNIT } from "../../models/weight-unit.model";
@@ -14,50 +14,60 @@ enum OWNER {
   T = "T",
   S = "S",
 }
-
-transactionChanges({
-  focusTrans: [
-    {
-      type: FOCUS_TYPE.WANT_TO_SELL,
-      owner: OWNER.T,
-      price: 41990,
-      weight: 10,
-    },
-    {
-      type: FOCUS_TYPE.WANT_TO_SELL,
-      owner: OWNER.S,
-      price: 41680,
-      weight: 5,
-    },
-    {
-      type: FOCUS_TYPE.WANT_TO_SELL,
-      owner: OWNER.T,
-      price: 41690,
-      weight: 5,
-    },
-    {
-      type: FOCUS_TYPE.WANT_TO_SELL,
-      owner: OWNER.T,
-      price: 41430,
-      weight: 14.9386,
-      unit: WEIGHT_UNIT.GRAM,
-    },
-    {
-      type: FOCUS_TYPE.WANT_TO_SELL,
-      owner: OWNER.T,
-      price: 40910,
-      weight: 1.5278,
-      unit: WEIGHT_UNIT.GRAM,
-    },
-  ],
-})
-  .pipe(
-    sendTransactionsToSW(),
-    map((changes) => changes.transactions),
-    displayTranscation(),
-    speakAtThePeak()
-  )
-  .subscribe();
+/**
+ * fetch API was using now
+ * watch content change on this site will be replaced
+ * will be deprecated soon
+ */
+// transactionChanges({
+//   focusTrans: [
+//     {
+//       type: FOCUS_TYPE.WANT_TO_SELL,
+//       owner: OWNER.T,
+//       price: 41990,
+//       weight: 10,
+//     },
+//     {
+//       type: FOCUS_TYPE.WANT_TO_SELL,
+//       owner: OWNER.S,
+//       price: 41680,
+//       weight: 5,
+//     },
+//     {
+//       type: FOCUS_TYPE.WANT_TO_SELL,
+//       owner: OWNER.T,
+//       price: 41690,
+//       weight: 5,
+//     },
+//     {
+//       type: FOCUS_TYPE.WANT_TO_SELL,
+//       owner: OWNER.T,
+//       price: 41430,
+//       weight: 14.9386,
+//       unit: WEIGHT_UNIT.GRAM,
+//     },
+//     {
+//       type: FOCUS_TYPE.WANT_TO_SELL,
+//       owner: OWNER.T,
+//       price: 40880,
+//       weight: 15.4006,
+//       unit: WEIGHT_UNIT.GRAM,
+//     },
+//     {
+//       type: FOCUS_TYPE.WANT_TO_SELL,
+//       owner: OWNER.T,
+//       price: 40340,
+//       weight: 1,
+//     },
+//   ],
+// })
+//   .pipe(
+//     sendTransactionsToSW(),
+//     map((changes) => changes.transactions),
+//     displayTranscation(),
+//     speakAtThePeak()
+//   )
+//   .subscribe();
 
 fromSWMessage()
   .pipe(filterBadgeText())

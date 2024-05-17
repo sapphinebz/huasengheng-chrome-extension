@@ -1,3 +1,5 @@
+/// <reference types="chrome-types" />
+
 import { from } from "rxjs";
 import { FocusedTransaction } from "../models/focus-transaction.model";
 

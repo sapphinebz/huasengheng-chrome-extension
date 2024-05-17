@@ -17,12 +17,12 @@
         "https://s.tradingview.com/widgetembed/*",
         "https://www.tradingview.com/chart/*"
       ],
-      "js": ["src/content-scripts/tradingview/trading-view.ts"],
+      "js": ["src/content-scripts/tradingview/trading-view.tsx"],
       "css": ["src/content-scripts/tradingview/trading-view.css"]
     }
   ],
   "action": {
-    "default_icon": "./assets/icons/icon16_16.png"
+    "default_icon": "./assets/icons/gold-mine16_16.png"
   },
   "permissions": ["activeTab", "scripting", "tabs", "storage"],
   "commands": {
