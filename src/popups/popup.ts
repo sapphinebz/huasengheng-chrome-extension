@@ -178,3 +178,14 @@ if (saveFiboRetracementBtn && highPriceEl && lowPriceEl) {
     )
     .subscribe();
 }
+
+const tradingViewIcon =
+  document.querySelector<HTMLElement>("#trading-view-icon");
+if (tradingViewIcon) {
+  fromEvent(tradingViewIcon, "click").subscribe((event) => {
+    event.preventDefault();
+    chrome.tabs.create({
+      url: "https://www.tradingview.com/chart/29SNRMLp/?symbol=OANDA%3AXAUUSD",
+    });
+  });
+}
