@@ -10,7 +10,7 @@ export function convertToTransactionChanges(options: {
   sell: string;
 }): TranscationRecord[] {
   const { focusTrans, buy, sell } = options;
-  focusTrans.sort((a, b) => b.price - a.price);
+
   const records = focusTrans.map(({ owner, price, weight, type, unit }) => {
     let textPrice = "0";
     if (type === FOCUS_TYPE.WANT_TO_BUY) {
