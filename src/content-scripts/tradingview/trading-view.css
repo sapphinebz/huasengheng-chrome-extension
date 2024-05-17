@@ -14,6 +14,7 @@
   right: 5rem;
   top: calc(38px + 1rem);
   z-index: 99999;
+  width: fit-content;
 }
 
 .chrome-font {
