@@ -17,7 +17,6 @@ import { TransactionChange } from "../models/transaction-change.model";
 import { WEIGHT_UNIT } from "../models/weight-unit.model";
 import { getPriceSchedule, toTransactionChange } from "../utils/fetch-gold";
 import { storageGetTrans } from "../utils/storage-get-trans";
-console.log("service worker");
 
 const onStorageTransChanged = new Observable<FocusedTransaction[]>(
   (subscriber) => {

@@ -1,74 +1,29 @@
-import React, {
-  ComponentType,
-  FunctionComponent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { TranscationRecord } from "../../../models/transaction-record.model";
-import { priceTypography } from "../../../utils/price-typography";
-import { formatCurrencyWithoutSymbol } from "../../../utils/format-currency-without-symbol";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { FOCUS_TYPE } from "../../../models/focus-type.model";
-import { Observable } from "rxjs";
+import { TranscationRecord } from "../../../models/transaction-record.model";
 import { makeItMovable } from "../../../utils/make-it-movable";
+import { ServiceWorkerMessagesContext } from "../contexts/service-worker-messages.context";
+import TransactionRecord from "./transaction-record";
+import { useVisibilityState } from "../../../utils/hooks/use-visibility-state";
 
 const HIDDEN_STYLE_CLASS = "chrome-hidden";
 
-const TransactionRecord = React.memo((props: { value: TranscationRecord }) => {
-  const { owner, price, diffPrice, type, totalPrice, weight } = props.value;
-
-  const { prefix, fontColor } = useMemo(
-    () => priceTypography(diffPrice, type),
-    [diffPrice, type]
-  );
-
-  const bahtDiffPrice = useMemo(
-    () =>
-      `${formatCurrencyWithoutSymbol(
-        price
-      )}(${prefix}${formatCurrencyWithoutSymbol(diffPrice)})`,
-    [prefix, diffPrice]
-  );
-
-  const totalDiffPrice = useMemo(
-    () => `${prefix}${formatCurrencyWithoutSymbol(totalPrice)}`,
-    [prefix, totalPrice]
-  );
-
-  const transactionType = useMemo(
-    () => `${type === FOCUS_TYPE.WANT_TO_BUY ? "รอซื้อ" : "รอขาย"}`,
-    [type]
-  );
-
-  return (
-    <div className="textBlock">
-      <span className="textColor01 textPricing" style={{ color: fontColor }}>
-        {owner} {bahtDiffPrice} {totalDiffPrice} {transactionType}
-      </span>
-    </div>
-  );
-});
-
-interface TransactionsProps {
-  transactions$: Observable<TranscationRecord[]>;
-  visible: boolean;
-}
+interface TransactionsProps {}
 
 const Transactions: React.FC<TransactionsProps> = (
   props: TransactionsProps
 ) => {
-  const { transactions$ } = props;
+  const context = useContext(ServiceWorkerMessagesContext);
   const [transactions, setTransactions] = useState<TranscationRecord[]>([]);
 
   useEffect(() => {
-    const subscription = transactions$.subscribe((trans) =>
-      setTransactions(trans)
+    const subscription = context.transactionChanged.subscribe((trans) =>
+      setTransactions(trans.transactions)
     );
     return () => {
       subscription.unsubscribe();
     };
-  }, [transactions$]);
+  }, [context]);
 
   const transactionsToSell = useMemo(
     () => transactions.filter((tran) => tran.type === FOCUS_TYPE.WANT_TO_SELL),
@@ -116,10 +71,7 @@ const Transactions: React.FC<TransactionsProps> = (
     }
   }, [containerRef]);
 
-  const nodeClassName = useMemo(
-    () => (props.visible ? "" : "chrome-hide"),
-    [props.visible]
-  );
+  const { nodeClassName } = useVisibilityState();
 
   return (
     <div

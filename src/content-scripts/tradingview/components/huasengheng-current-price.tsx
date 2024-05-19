@@ -1,16 +1,14 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Observable } from "rxjs";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { TransactionChange } from "../../../models/transaction-change.model";
-import { makeItMovable } from "../../../utils/make-it-movable";
 import { formatCurrencyWithoutSymbol } from "../../../utils/format-currency-without-symbol";
+import { makeItMovable } from "../../../utils/make-it-movable";
+import { ServiceWorkerMessagesContext } from "../contexts/service-worker-messages.context";
+import { useVisibilityState } from "../../../utils/hooks/use-visibility-state";
 
-interface ComponentProps {
-  transactionChange$: Observable<TransactionChange>;
-  visible: boolean;
-}
+interface ComponentProps {}
 const HuasenghengCurrentPrice: React.FC<ComponentProps> = React.memo(
   (props) => {
-    const { transactionChange$ } = props;
+    const context = useContext(ServiceWorkerMessagesContext);
 
     const [transactionChanges, setTransactionChanges] =
       useState<TransactionChange>();
@@ -32,13 +30,13 @@ const HuasenghengCurrentPrice: React.FC<ComponentProps> = React.memo(
     }, [transactionChanges?.huasenghengSell]);
 
     useEffect(() => {
-      const subscription = transactionChange$.subscribe((changes) =>
+      const subscription = context.transactionChanged.subscribe((changes) =>
         setTransactionChanges(changes)
       );
       return () => {
         subscription.unsubscribe();
       };
-    }, [transactionChange$]);
+    }, [context]);
 
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -50,10 +48,7 @@ const HuasenghengCurrentPrice: React.FC<ComponentProps> = React.memo(
       }
     }, [containerRef]);
 
-    const nodeClassName = useMemo(
-      () => (props.visible ? "" : "chrome-hide"),
-      [props.visible]
-    );
+    const { nodeClassName } = useVisibilityState();
 
     return (
       <div

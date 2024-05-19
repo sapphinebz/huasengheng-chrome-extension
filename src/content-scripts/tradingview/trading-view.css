@@ -61,3 +61,7 @@
 .chrome-hidden {
   display: none;
 }
+
+.reading-text-color {
+  color: rgb(209, 212, 220);
+}
