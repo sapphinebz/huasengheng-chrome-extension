@@ -2,9 +2,13 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { FOCUS_TYPE } from "../../../models/focus-type.model";
 import { TranscationRecord } from "../../../models/transaction-record.model";
 import { makeItMovable } from "../../../utils/make-it-movable";
-import { ServiceWorkerMessagesContext } from "../contexts/service-worker-messages.context";
 import TransactionRecord from "./transaction-record";
 import { useVisibilityState } from "../../../utils/hooks/use-visibility-state";
+import {
+  TransactionRecordContext,
+  createTransactionRecordContext,
+} from "../contexts/transaction-record.context";
+import { ServiceWorkerMessagesContext } from "../../../utils/contexts/service-worker-messages.context";
 
 const HIDDEN_STYLE_CLASS = "chrome-hidden";
 
@@ -81,12 +85,20 @@ const Transactions: React.FC<TransactionsProps> = (
     >
       <div className={classNameToSell}>
         {transactionsToSell.map((tran) => (
-          <TransactionRecord value={tran}></TransactionRecord>
+          <TransactionRecordContext.Provider
+            value={createTransactionRecordContext(tran)}
+          >
+            <TransactionRecord></TransactionRecord>
+          </TransactionRecordContext.Provider>
         ))}
       </div>
       <div className={classNameToBuy}>
         {transactionsToBuy.map((tran) => (
-          <TransactionRecord value={tran}></TransactionRecord>
+          <TransactionRecordContext.Provider
+            value={createTransactionRecordContext(tran)}
+          >
+            <TransactionRecord></TransactionRecord>
+          </TransactionRecordContext.Provider>
         ))}
       </div>
     </div>

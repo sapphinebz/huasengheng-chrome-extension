@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import FiboRetracement from "./components/fibo-retracement";
-import IconTradingView from "./components/icon-trading-view";
+import IconTradingView from "../utils/components/icon-trading-view";
 import InvestmentTable from "./components/investments-table";
 
 const root = createRoot(document.body);

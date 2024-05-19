@@ -1,9 +1,9 @@
 import { createContext } from "react";
 import { connectable, map, share } from "rxjs";
-import { distinctTransactions } from "../../../utils/distinct-transactions";
-import { filterTransactions } from "../../../utils/filter-transactions";
-import { fromSWMessage } from "../../../utils/from-sw-message";
-import { filterBadgeText } from "../../../utils/filter-badge-text";
+import { distinctTransactions } from "../distinct-transactions";
+import { filterTransactions } from "../filter-transactions";
+import { fromSWMessage } from "../from-sw-message";
+import { filterBadgeText } from "../filter-badge-text";
 
 const serviceWorkerMSG$ = connectable(
   fromSWMessage({

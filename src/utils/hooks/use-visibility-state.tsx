@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from "react";
-import { ServiceWorkerMessagesContext } from "../../content-scripts/tradingview/contexts/service-worker-messages.context";
+import { ServiceWorkerMessagesContext } from "../contexts/service-worker-messages.context";
 
 export function useVisibilityState() {
   const context = useContext(ServiceWorkerMessagesContext);

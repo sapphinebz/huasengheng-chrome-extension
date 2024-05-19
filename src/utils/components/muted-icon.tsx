@@ -1,13 +1,14 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 interface Props {
-  state: "off" | "on";
+  muted: boolean;
+  onClickToggle?: (newValue: boolean) => void;
 }
-const VolumeState: React.FC<Props> = React.memo((props) => {
-  const [state, setState] = useState<"on" | "off">(props.state);
+const MutedIcon: React.FC<Props> = React.memo((props) => {
+  const [muted, setMuted] = useState<boolean>(props.muted);
 
-  const VolumnIcon = useMemo(() => {
-    if (state === "off") {
+  const VolumeIcon = useMemo(() => {
+    if (muted) {
       return (
         <path
           fill="currentColor"
@@ -20,27 +21,29 @@ const VolumeState: React.FC<Props> = React.memo((props) => {
         fill="currentColor"
         d="M16.706 10.292a.999.999 0 1 0-1.412 1.416c.345.345.535.803.535 1.291c0 .489-.19.948-.536 1.294a.999.999 0 1 0 1.414 1.414c.724-.723 1.122-1.685 1.122-2.708s-.398-1.984-1.123-2.707m2-2a1 1 0 1 0-1.412 1.416a4.616 4.616 0 0 1 1.364 3.287a4.628 4.628 0 0 1-1.365 3.298a.999.999 0 1 0 1.414 1.414a6.617 6.617 0 0 0 1.951-4.713a6.603 6.603 0 0 0-1.952-4.702m2-2a1 1 0 1 0-1.412 1.416a7.42 7.42 0 0 1 2.192 5.284a7.437 7.437 0 0 1-2.193 5.301a.999.999 0 1 0 1.414 1.414a9.427 9.427 0 0 0 2.779-6.717a9.402 9.402 0 0 0-2.78-6.698m-8.568-.468c-.449 0-.905.152-1.356.453L8.109 8.059C7.357 8.561 5.904 9 5 9c-1.654 0-3 1.346-3 3v2c0 1.654 1.346 3 3 3c.904 0 2.357.439 3.109.941l2.672 1.781c.451.301.907.453 1.356.453c.898.001 1.863-.68 1.863-2.175V8c0-1.495-.965-2.176-1.862-2.176M5 15a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1c1.211 0 2.907-.495 4-1.146v6.293C7.907 15.495 6.211 15 5 15m7 3l-.006.12l-.104-.062l-1.89-1.26V9.202l1.891-1.261l.104-.062L12 8z"
       ></path>
-      //   <path
-      //     fill="currentColor"
-      //     d="M17.138 5.824c-.449 0-.905.152-1.356.453L13.11 8.058C12.357 8.561 10.904 9 10 9c-1.654 0-3 1.346-3 3v2c0 1.654 1.346 3 3 3c.904 0 2.357.439 3.109.941l2.672 1.781c.451.301.907.453 1.356.453c.898.001 1.863-.68 1.863-2.175V8c0-1.495-.965-2.176-1.862-2.176M14 16.146C12.907 15.495 11.211 15 10 15a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1c1.211 0 2.907-.495 4-1.146zM17 18l-.006.12l-.104-.062l-1.89-1.26V9.202l1.891-1.261l.104-.062L17 8z"
-      //   ></path>
     );
-  }, [state]);
+  }, [muted]);
+
+  const clickToggle = useCallback(() => {
+    setMuted((muted) => {
+      const newValue = !muted;
+      props.onClickToggle?.(newValue);
+      return newValue;
+    });
+  }, [setMuted, props.onClickToggle]);
 
   return (
     <svg
-      onClick={() => {
-        setState((state) => (state === "off" ? "on" : "off"));
-      }}
+      onClick={clickToggle}
       style={{ cursor: "pointer" }}
       xmlns="http://www.w3.org/2000/svg"
       width="1.5rem"
       height="1.5rem"
       viewBox="0 0 24 24"
     >
-      {VolumnIcon}
+      {VolumeIcon}
     </svg>
   );
 });
 
-export default VolumeState;
+export default MutedIcon;
