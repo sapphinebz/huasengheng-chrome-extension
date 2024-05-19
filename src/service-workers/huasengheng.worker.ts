@@ -16,7 +16,7 @@ import { FOCUS_TYPE } from "../models/focus-type.model";
 import { TransactionChange } from "../models/transaction-change.model";
 import { WEIGHT_UNIT } from "../models/weight-unit.model";
 import { getPriceSchedule, toTransactionChange } from "../utils/fetch-gold";
-import { storageGetTrans } from "../utils/storage-get-trans";
+import { getInvestmentsStorage } from "../utils/get-investments-storage";
 
 const onStorageTransChanged = new Observable<FocusedTransaction[]>(
   (subscriber) => {
@@ -28,7 +28,7 @@ const onStorageTransChanged = new Observable<FocusedTransaction[]>(
 );
 
 const transactionChange$ = connectable(
-  merge(storageGetTrans(), onStorageTransChanged).pipe(
+  merge(getInvestmentsStorage(), onStorageTransChanged).pipe(
     switchMap((focusTrans) => {
       return getPriceSchedule({ GoldType: "HSH", period: 3000 }).pipe(
         toTransactionChange(focusTrans)

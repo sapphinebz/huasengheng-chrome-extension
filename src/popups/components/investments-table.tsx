@@ -8,8 +8,8 @@ import React, {
 import { Subject, merge } from "rxjs";
 import { concatMap, exhaustMap, switchMap, tap } from "rxjs/operators";
 import { FocusedTransaction } from "../../models/focus-transaction.model";
-import { storageGetTrans } from "../../utils/storage-get-trans";
-import { storageSetTrans } from "../../utils/storage-set-trans";
+import { getInvestmentsStorage } from "../../utils/get-investments-storage";
+import { setInvestmentsStorage } from "../../utils/set-investments-storage";
 import InvestmentRow from "./investment-row";
 import { TransactionsContext } from "../contexts/transactions.context";
 
@@ -21,8 +21,8 @@ const InvestmentTable: React.FC<Props> = React.memo(() => {
 
   useEffect(() => {
     const subscription = merge(
-      storageGetTrans(),
-      context.onReload.pipe(exhaustMap(() => storageGetTrans()))
+      getInvestmentsStorage(),
+      context.onReload.pipe(exhaustMap(() => getInvestmentsStorage()))
     ).subscribe((list) => {
       setTransactions(list);
     });
@@ -41,9 +41,9 @@ const InvestmentTable: React.FC<Props> = React.memo(() => {
     const subscription = delete$
       .pipe(
         concatMap((model) => {
-          return storageGetTrans().pipe(
+          return getInvestmentsStorage().pipe(
             switchMap((list) => {
-              return storageSetTrans(
+              return setInvestmentsStorage(
                 list.filter(
                   (i) =>
                     !(

@@ -8,11 +8,11 @@ import React, {
 } from "react";
 import { useForm } from "../../utils/hooks/use-form";
 import { Subject, exhaustMap, switchMap, tap } from "rxjs";
-import { storageGetTrans } from "../../utils/storage-get-trans";
 import { FocusedTransaction } from "../../models/focus-transaction.model";
 import { FOCUS_TYPE } from "../../models/focus-type.model";
-import { storageSetTrans } from "../../utils/storage-set-trans";
 import { TransactionsContext } from "../contexts/transactions.context";
+import { setInvestmentsStorage } from "../../utils/set-investments-storage";
+import { getInvestmentsStorage } from "../../utils/get-investments-storage";
 
 interface FormRetracement {
   highPrice: number;
@@ -34,7 +34,7 @@ const FiboRetracement: React.FC<Props> = React.memo(() => {
       .pipe(
         exhaustMap((formValue) => {
           const diffPrice = formValue.highPrice - formValue.lowPrice;
-          return storageGetTrans().pipe(
+          return getInvestmentsStorage().pipe(
             switchMap((list) => {
               const fiboList = [0.236, 0.382, 0.5, 0];
               for (const fibo of fiboList) {
@@ -47,7 +47,7 @@ const FiboRetracement: React.FC<Props> = React.memo(() => {
                 data.weight = 1;
                 list.push(data);
               }
-              return storageSetTrans(list).pipe(
+              return setInvestmentsStorage(list).pipe(
                 tap(() => {
                   form.reset();
                   context.reload();

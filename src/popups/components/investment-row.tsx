@@ -9,8 +9,8 @@ import React, {
 } from "react";
 import { FocusedTransaction } from "../../models/focus-transaction.model";
 import { Subject, exhaustMap, switchMap, tap } from "rxjs";
-import { storageGetTrans } from "../../utils/storage-get-trans";
-import { storageSetTrans } from "../../utils/storage-set-trans";
+import { getInvestmentsStorage } from "../../utils/get-investments-storage";
+import { setInvestmentsStorage } from "../../utils/set-investments-storage";
 import { useForm } from "../../utils/hooks/use-form";
 import { TransactionsContext } from "../contexts/transactions.context";
 
@@ -42,11 +42,11 @@ const InvestmentRow: React.FC<InvestmentRowProps> = React.memo((props) => {
     const subscription = clickAdd$
       .pipe(
         exhaustMap((model) => {
-          return storageGetTrans().pipe(
+          return getInvestmentsStorage().pipe(
             switchMap((list) => {
               const newList = list.filter((tran) => Boolean(tran.owner));
               newList.push(model);
-              return storageSetTrans(newList).pipe(
+              return setInvestmentsStorage(newList).pipe(
                 tap(() => {
                   context.reload();
                 })
