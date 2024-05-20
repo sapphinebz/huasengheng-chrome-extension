@@ -1,14 +1,16 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef } from "react";
+import { distinctUntilChanged, map, share } from "rxjs/operators";
 import { FOCUS_TYPE } from "../../../models/focus-type.model";
-import { TranscationRecord } from "../../../models/transaction-record.model";
-import { makeItMovable } from "../../../utils/make-it-movable";
-import TransactionRecord from "./transaction-record";
+import { ServiceWorkerMessagesContext } from "../../../utils/contexts/service-worker-messages.context";
+import { useObservableState } from "../../../utils/hooks/use-observable-state";
+import { useSpeakOnThePeak } from "../../../utils/hooks/use-speak-on-the-peak";
 import { useVisibilityState } from "../../../utils/hooks/use-visibility-state";
+import { makeItMovable } from "../../../utils/make-it-movable";
 import {
   TransactionRecordContext,
   createTransactionRecordContext,
 } from "../contexts/transaction-record.context";
-import { ServiceWorkerMessagesContext } from "../../../utils/contexts/service-worker-messages.context";
+import TransactionRecord from "./transaction-record";
 
 const HIDDEN_STYLE_CLASS = "chrome-hidden";
 
@@ -17,17 +19,11 @@ interface TransactionsProps {}
 const Transactions: React.FC<TransactionsProps> = (
   props: TransactionsProps
 ) => {
-  const context = useContext(ServiceWorkerMessagesContext);
-  const [transactions, setTransactions] = useState<TranscationRecord[]>([]);
+  const transactionsChanged = useTransactionsChanged();
 
-  useEffect(() => {
-    const subscription = context.transactionChanged.subscribe((trans) =>
-      setTransactions(trans.transactions)
-    );
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [context]);
+  useSpeakOnThePeak(transactionsChanged);
+
+  const [transactions] = useObservableState(transactionsChanged, []);
 
   const transactionsToSell = useMemo(
     () => transactions.filter((tran) => tran.type === FOCUS_TYPE.WANT_TO_SELL),
@@ -104,4 +100,19 @@ const Transactions: React.FC<TransactionsProps> = (
     </div>
   );
 };
+
+function useTransactionsChanged() {
+  const serviceWorkerContext = useContext(ServiceWorkerMessagesContext);
+
+  return useMemo(
+    () =>
+      serviceWorkerContext.transactionChanged.pipe(
+        map((changed) => changed.transactions),
+        distinctUntilChanged(),
+        share()
+      ),
+    [serviceWorkerContext]
+  );
+}
+
 export default Transactions;

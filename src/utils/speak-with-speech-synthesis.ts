@@ -21,7 +21,7 @@ const thaiVoiceActor$ = new Observable<SpeechSynthesisVoice>((subscriber) => {
   });
 });
 
-combineLatest([onContextSpeech$, thaiVoiceActor$.pipe(toBeReady())]).subscribe(
+combineLatest([onContextSpeech$, thaiVoiceActor$]).subscribe(
   ([content, voiceActor]) => {
     if (speechSynthesis.speaking) {
       speechSynthesis.cancel();
@@ -38,17 +38,4 @@ combineLatest([onContextSpeech$, thaiVoiceActor$.pipe(toBeReady())]).subscribe(
 
 export function speakWithSpeechSynthesis(content: string) {
   onContextSpeech$.next(content);
-}
-
-function toBeReady(): MonoTypeOperatorFunction<SpeechSynthesisVoice> {
-  return (thaiSpeech$: Observable<SpeechSynthesisVoice>) =>
-    new Observable<SpeechSynthesisVoice>((subscriber) => {
-      const interactOnWeb$ = fromEvent(document, "click");
-      return combineLatest([thaiSpeech$, interactOnWeb$]).subscribe(
-        ([speechActor]) => {
-          subscriber.next(speechActor);
-          subscriber.complete();
-        }
-      );
-    });
 }

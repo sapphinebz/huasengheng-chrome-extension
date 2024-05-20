@@ -12,9 +12,7 @@ import { TransactionRecordContext } from "../contexts/transaction-record.context
 import { TransactionsContext } from "../contexts/transactions.context";
 import MutedIcon from "../../../utils/components/muted-icon";
 import { useObservableState } from "../../../utils/hooks/use-observable-state";
-
 import { share } from "rxjs";
-import { useSpeakDiffPrices } from "../../../utils/hooks/use-speak-diff-prices";
 
 interface Props {}
 const TransactionRecord: React.FC<Props> = React.memo(() => {
@@ -53,11 +51,9 @@ const TransactionRecord: React.FC<Props> = React.memo(() => {
     return `${owner} ${bahtDiffPrice} ${totalDiffPrice} ${transactionType}`;
   }, [recordContext, bahtDiffPrice, totalDiffPrice, transactionType]);
 
-  const diffPriceChanges = useDiffPriceChanges();
   const mutedChanges = useMutedChanges();
 
   const [muted] = useObservableState(mutedChanges, true);
-  useSpeakDiffPrices(mutedChanges, diffPriceChanges);
 
   const onMutedClickToggle = useCallback(
     (value: boolean) => {
@@ -80,16 +76,6 @@ const TransactionRecord: React.FC<Props> = React.memo(() => {
     </div>
   );
 });
-
-function useDiffPriceChanges() {
-  const recordContext = useContext(TransactionRecordContext);
-  const transactionsContext = useContext(TransactionsContext);
-  return useMemo(() => {
-    return transactionsContext
-      .diffPriceChanges(recordContext.model)
-      .pipe(share());
-  }, [recordContext, transactionsContext]);
-}
 
 function useMutedChanges() {
   const recordContext = useContext(TransactionRecordContext);

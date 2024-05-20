@@ -1,31 +1,38 @@
-import { createContext } from "react";
-import { BehaviorSubject, distinctUntilChanged, map } from "rxjs";
+import { createContext, useContext } from "react";
+import {
+  BehaviorSubject,
+  Subject,
+  distinctUntilChanged,
+  map,
+  mergeMap,
+  switchMap,
+} from "rxjs";
 import { TranscationRecord } from "../../../models/transaction-record.model";
+import { generateTransactionRecordKey } from "../../../utils/generate-transaction-record-key";
+
+const MUTED_DEFAULT = true;
 
 export interface TransactionState {
   key: string;
-  mute: boolean;
+  muted: boolean;
   diffPrice: number;
 }
 
 export function createTransactionsContext() {
   const transactionsState = new BehaviorSubject<TransactionState[]>([]);
 
-  const generateKey = (value: TranscationRecord) => {
-    return `${value.owner}${value.price}${value.type}${value.weight}`;
-  };
   const findState = (key: string) => {
     const state = transactionsState.value;
     return state.find((t) => t.key === key);
   };
 
   const findAndCreateState = (value: TranscationRecord) => {
-    const key = generateKey(value);
+    const key = generateTransactionRecordKey(value);
     let state = findState(key);
     if (!state) {
       state = createState({
         key,
-        mute: true,
+        muted: MUTED_DEFAULT,
         diffPrice: value.diffPrice,
       });
     }
@@ -46,20 +53,29 @@ export function createTransactionsContext() {
 
   const mute = (model: TranscationRecord) => {
     const state = findAndCreateState(model);
-    state.mute = true;
+    state.muted = MUTED_DEFAULT;
     triggerChanges();
   };
 
   const toggleMute = (model: TranscationRecord) => {
     const state = findAndCreateState(model);
-    state.mute = !state.mute;
+    state.muted = !state.muted;
     triggerChanges();
   };
 
   const setMuted = (model: TranscationRecord, value: boolean) => {
     const state = findAndCreateState(model);
-    state.mute = value;
+    state.muted = value;
     triggerChanges();
+  };
+
+  const isMuted = (model: TranscationRecord) => {
+    const key = generateTransactionRecordKey(model);
+    const state = findState(key);
+    if (state) {
+      return state.muted;
+    }
+    return MUTED_DEFAULT;
   };
 
   const muteChanges = (model: TranscationRecord) => {
@@ -67,9 +83,9 @@ export function createTransactionsContext() {
       map(() => {
         const state = findAndCreateState(model);
         if (state) {
-          return state.mute;
+          return state.muted;
         }
-        return true;
+        return MUTED_DEFAULT;
       })
     );
   };
@@ -93,11 +109,16 @@ export function createTransactionsContext() {
     );
   };
 
+  const getValue = () => {
+    return transactionsState.value;
+  };
+
   return {
-    generateKey,
+    getValue,
     mute,
     toggleMute,
     findState,
+    isMuted,
     setMuted,
     findAndCreateState,
     muteChanges,
