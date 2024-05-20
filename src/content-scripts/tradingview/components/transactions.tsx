@@ -6,11 +6,8 @@ import { useObservableState } from "../../../utils/hooks/use-observable-state";
 import { useSpeakOnThePeak } from "../../../utils/hooks/use-speak-on-the-peak";
 import { useVisibilityState } from "../../../utils/hooks/use-visibility-state";
 import { makeItMovable } from "../../../utils/make-it-movable";
-import {
-  TransactionRecordContext,
-  createTransactionRecordContext,
-} from "../contexts/transaction-record.context";
 import TransactionRecord from "./transaction-record";
+import { TranscationRecord } from "../../../models/transaction-record.model";
 
 const HIDDEN_STYLE_CLASS = "chrome-hidden";
 
@@ -25,14 +22,14 @@ const Transactions: React.FC<TransactionsProps> = (
 
   const [transactions] = useObservableState(transactionsChanged, []);
 
-  const transactionsToSell = useMemo(
-    () => transactions.filter((tran) => tran.type === FOCUS_TYPE.WANT_TO_SELL),
-    [transactions]
+  const toSellJSXElements = useTypedTransactions(
+    transactions,
+    FOCUS_TYPE.WANT_TO_SELL
   );
 
   const containsToSell = useMemo(
-    () => transactionsToSell.length > 0,
-    [transactionsToSell]
+    () => toSellJSXElements.length > 0,
+    [toSellJSXElements]
   );
 
   const classNameToSell = useMemo(() => {
@@ -43,14 +40,14 @@ const Transactions: React.FC<TransactionsProps> = (
     return className;
   }, [containsToSell]);
 
-  const transactionsToBuy = useMemo(
-    () => transactions.filter((tran) => tran.type === FOCUS_TYPE.WANT_TO_BUY),
-    [transactions]
+  const toBuyJSXElements = useTypedTransactions(
+    transactions,
+    FOCUS_TYPE.WANT_TO_BUY
   );
 
   const containsToBuy = useMemo(
-    () => transactionsToBuy.length > 0,
-    [transactionsToBuy]
+    () => toBuyJSXElements.length > 0,
+    [toBuyJSXElements]
   );
 
   const classNameToBuy = useMemo(() => {
@@ -79,24 +76,8 @@ const Transactions: React.FC<TransactionsProps> = (
       className={`chrome-fixed ${nodeClassName}`}
       style={{ display: "flex", flexDirection: "column", rowGap: "0.5rem" }}
     >
-      <div className={classNameToSell}>
-        {transactionsToSell.map((tran) => (
-          <TransactionRecordContext.Provider
-            value={createTransactionRecordContext(tran)}
-          >
-            <TransactionRecord></TransactionRecord>
-          </TransactionRecordContext.Provider>
-        ))}
-      </div>
-      <div className={classNameToBuy}>
-        {transactionsToBuy.map((tran) => (
-          <TransactionRecordContext.Provider
-            value={createTransactionRecordContext(tran)}
-          >
-            <TransactionRecord></TransactionRecord>
-          </TransactionRecordContext.Provider>
-        ))}
-      </div>
+      <div className={classNameToSell}>{toSellJSXElements}</div>
+      <div className={classNameToBuy}>{toBuyJSXElements}</div>
     </div>
   );
 };
@@ -113,6 +94,21 @@ function useTransactionsChanged() {
       ),
     [serviceWorkerContext]
   );
+}
+
+function useTypedTransactions(
+  transactions: TranscationRecord[],
+  type: FOCUS_TYPE
+) {
+  return useMemo(() => {
+    const jsxList: React.JSX.Element[] = [];
+    for (const record of transactions) {
+      if (record.type === type) {
+        jsxList.push(<TransactionRecord record={record}></TransactionRecord>);
+      }
+    }
+    return jsxList;
+  }, [transactions]);
 }
 
 export default Transactions;

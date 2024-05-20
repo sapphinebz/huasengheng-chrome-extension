@@ -8,59 +8,61 @@ import React, {
 import { FOCUS_TYPE } from "../../../models/focus-type.model";
 import { formatCurrencyWithoutSymbol } from "../../../utils/format-currency-without-symbol";
 import { priceTypography } from "../../../utils/price-typography";
-import { TransactionRecordContext } from "../contexts/transaction-record.context";
 import { TransactionsContext } from "../contexts/transactions.context";
 import MutedIcon from "../../../utils/components/muted-icon";
 import { useObservableState } from "../../../utils/hooks/use-observable-state";
 import { share } from "rxjs";
+import { TranscationRecord } from "../../../models/transaction-record.model";
 
-interface Props {}
-const TransactionRecord: React.FC<Props> = React.memo(() => {
-  const recordContext = useContext(TransactionRecordContext);
+interface Props {
+  record: TranscationRecord;
+}
+const TransactionRecord: React.FC<Props> = React.memo((props) => {
   const transactionsContext = useContext(TransactionsContext);
 
   useEffect(() => {
-    const model = recordContext.model;
-    transactionsContext.setDiffPrice(model);
-  }, [recordContext, transactionsContext]);
+    transactionsContext.setDiffPrice(props.record);
+  }, [props.record, transactionsContext]);
 
   const { prefix, fontColor } = useMemo(() => {
-    const model = recordContext.model;
-    return priceTypography(model.diffPrice, model.type);
-  }, [recordContext]);
+    const { diffPrice, type } = props.record;
+    return priceTypography(diffPrice, type);
+  }, [props.record]);
 
   const bahtDiffPrice = useMemo(() => {
-    const { price, diffPrice } = recordContext.model;
+    const { price, diffPrice } = props.record;
     return `${formatCurrencyWithoutSymbol(
       price
     )}(${prefix}${formatCurrencyWithoutSymbol(diffPrice)})`;
-  }, [recordContext, prefix]);
+  }, [props.record, prefix]);
 
   const totalDiffPrice = useMemo(() => {
-    const { totalPrice } = recordContext.model;
+    const { totalPrice } = props.record;
     return `${prefix}${formatCurrencyWithoutSymbol(totalPrice)}`;
-  }, [recordContext, prefix]);
+  }, [props.record, prefix]);
 
   const transactionType = useMemo(() => {
-    const { type } = recordContext.model;
+    const { type } = props.record;
     return `${type === FOCUS_TYPE.WANT_TO_BUY ? "รอซื้อ" : "รอขาย"}`;
-  }, [recordContext]);
+  }, [props.record]);
 
   const recordText = useMemo(() => {
-    const { owner } = recordContext.model;
+    const { owner } = props.record;
     return `${owner} ${bahtDiffPrice} ${totalDiffPrice} ${transactionType}`;
-  }, [recordContext, bahtDiffPrice, totalDiffPrice, transactionType]);
+  }, [props.record, bahtDiffPrice, totalDiffPrice, transactionType]);
 
-  const mutedChanges = useMutedChanges();
+  const mutedChanges = useMutedChanges(props.record);
 
   const [muted] = useObservableState(mutedChanges, true);
 
   const onMutedClickToggle = useCallback(
     (value: boolean) => {
-      transactionsContext.setMuted(recordContext.model, value);
+      transactionsContext.setMuted(props.record, value);
     },
-    [recordContext, transactionsContext]
+    [props.record, transactionsContext]
   );
+
+  const mutedColor = useMemo(() => (!muted ? "#0fb153" : ""), [muted]);
 
   return (
     <div
@@ -70,19 +72,18 @@ const TransactionRecord: React.FC<Props> = React.memo(() => {
       <span className="textColor01 textPricing" style={{ color: fontColor }}>
         {recordText}
       </span>
-      <span className="reading-text-color">
+      <span className="reading-text-color" style={{ color: mutedColor }}>
         <MutedIcon muted={muted} onClickToggle={onMutedClickToggle}></MutedIcon>
       </span>
     </div>
   );
 });
 
-function useMutedChanges() {
-  const recordContext = useContext(TransactionRecordContext);
+function useMutedChanges(record: TranscationRecord) {
   const transactionsContext = useContext(TransactionsContext);
   return useMemo(() => {
-    return transactionsContext.muteChanges(recordContext.model).pipe(share());
-  }, [recordContext, transactionsContext]);
+    return transactionsContext.muteChanges(record).pipe(share());
+  }, [record, transactionsContext]);
 }
 
 export default TransactionRecord;

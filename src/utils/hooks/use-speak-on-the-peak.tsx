@@ -27,15 +27,15 @@ export function useSpeakOnThePeak(
               );
               const option = transactionsContext.findState(key);
               if (option && !option.muted) {
-                let spokenMessage = `กำไร`;
+                let spokenMessage = ``;
                 if (lastTranscation) {
                   if (lastTranscation.totalPrice > totalPrice) {
-                    spokenMessage = `ลดลง ${spokenMessage}`;
+                    spokenMessage = `ลดลง กำไร ${diffPrice}`;
                   } else {
-                    spokenMessage = `เพิ่มขึ้น ${spokenMessage}`;
+                    spokenMessage = `เพิ่มขึ้น กำไร ${diffPrice}`;
                   }
                 }
-                speakWithSpeechSynthesis(`${spokenMessage} ${diffPrice}`);
+                speakWithSpeechSynthesis(spokenMessage);
               }
             }
           } else if (type === FOCUS_TYPE.WANT_TO_BUY) {
