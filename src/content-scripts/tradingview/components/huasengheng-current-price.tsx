@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { TransactionChange } from "../../../models/transaction-change.model";
-import { formatCurrencyWithoutSymbol } from "../../../utils/format-currency-without-symbol";
-import { makeItMovable } from "../../../utils/make-it-movable";
-
-import { useVisibilityState } from "../../../utils/hooks/use-visibility-state";
-import { ServiceWorkerMessagesContext } from "../../../utils/contexts/service-worker-messages.context";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import * as React from "react";
+import { TransactionChange } from "@models/transaction-change.model";
+import { formatCurrencyWithoutSymbol } from "@utils/format-currency-without-symbol";
+import { makeItMovable } from "@utils/make-it-movable";
+import { useVisibilityState } from "@utils/hooks/use-visibility-state";
+import { ServiceWorkerMessagesContext } from "@utils/contexts/service-worker-messages.context";
 
 interface ComponentProps {}
 const HuasenghengCurrentPrice: React.FC<ComponentProps> = React.memo(

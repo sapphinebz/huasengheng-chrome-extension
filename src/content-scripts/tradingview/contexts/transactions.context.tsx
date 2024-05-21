@@ -7,7 +7,7 @@ import {
   mergeMap,
   switchMap,
 } from "rxjs";
-import { TranscationRecord } from "../../../models/transaction-record.model";
+import { TranscationRecord } from "@models/transaction-record.model";
 import { generateTransactionRecordKey } from "../../../utils/generate-transaction-record-key";
 
 const MUTED_DEFAULT = true;

@@ -1,18 +1,13 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { FOCUS_TYPE } from "../../../models/focus-type.model";
-import { formatCurrencyWithoutSymbol } from "../../../utils/format-currency-without-symbol";
-import { priceTypography } from "../../../utils/price-typography";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import * as React from "react";
+import { FOCUS_TYPE } from "@models/focus-type.model";
+import { formatCurrencyWithoutSymbol } from "@utils/format-currency-without-symbol";
+import { priceTypography } from "@utils/price-typography";
 import { TransactionsContext } from "../contexts/transactions.context";
-import MutedIcon from "../../../utils/components/muted-icon";
-import { useObservableState } from "../../../utils/hooks/use-observable-state";
+import MutedIcon from "@utils/components/muted-icon";
+import { useObservableState } from "@utils/hooks/use-observable-state";
 import { share } from "rxjs";
-import { TranscationRecord } from "../../../models/transaction-record.model";
+import { TranscationRecord } from "@models/transaction-record.model";
 
 interface Props {
   record: TranscationRecord;

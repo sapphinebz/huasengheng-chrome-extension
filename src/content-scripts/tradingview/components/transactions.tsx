@@ -1,13 +1,13 @@
-import React, { useContext, useEffect, useMemo, useRef } from "react";
+import { ServiceWorkerMessagesContext } from "@utils/contexts/service-worker-messages.context";
+import { useObservableState } from "@utils/hooks/use-observable-state";
+import { useSpeakOnThePeak } from "@utils/hooks/use-speak-on-the-peak";
+import { useVisibilityState } from "@utils/hooks/use-visibility-state";
+import { makeItMovable } from "@utils/make-it-movable";
+import * as React from "react";
 import { distinctUntilChanged, map, share } from "rxjs/operators";
-import { FOCUS_TYPE } from "../../../models/focus-type.model";
-import { ServiceWorkerMessagesContext } from "../../../utils/contexts/service-worker-messages.context";
-import { useObservableState } from "../../../utils/hooks/use-observable-state";
-import { useSpeakOnThePeak } from "../../../utils/hooks/use-speak-on-the-peak";
-import { useVisibilityState } from "../../../utils/hooks/use-visibility-state";
-import { makeItMovable } from "../../../utils/make-it-movable";
+import { FOCUS_TYPE } from "@models/focus-type.model";
+import { TranscationRecord } from "@models/transaction-record.model";
 import TransactionRecord from "./transaction-record";
-import { TranscationRecord } from "../../../models/transaction-record.model";
 
 const HIDDEN_STYLE_CLASS = "chrome-hidden";
 
@@ -25,12 +25,12 @@ const Transactions: React.FC<TransactionsProps> = (
   const [toBuyJSXElements, toSellJSXElements] =
     useSeperatedTransactions(transactions);
 
-  const containsToSell = useMemo(
+  const containsToSell = React.useMemo(
     () => toSellJSXElements.length > 0,
     [toSellJSXElements]
   );
 
-  const classNameToSell = useMemo(() => {
+  const classNameToSell = React.useMemo(() => {
     let className = `chrome-fixed-block chrome-font chrome-to-sell`;
     if (!containsToSell) {
       className += ` ${HIDDEN_STYLE_CLASS}`;
@@ -38,12 +38,12 @@ const Transactions: React.FC<TransactionsProps> = (
     return className;
   }, [containsToSell]);
 
-  const containsToBuy = useMemo(
+  const containsToBuy = React.useMemo(
     () => toBuyJSXElements.length > 0,
     [toBuyJSXElements]
   );
 
-  const classNameToBuy = useMemo(() => {
+  const classNameToBuy = React.useMemo(() => {
     let className = `chrome-fixed-block chrome-font chrome-to-buy`;
     if (!containsToBuy) {
       className += ` ${HIDDEN_STYLE_CLASS}`;
@@ -51,9 +51,9 @@ const Transactions: React.FC<TransactionsProps> = (
     return className;
   }, [containsToBuy]);
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const el = containerRef.current;
     if (el) {
       const subscription = makeItMovable(el).subscribe();
@@ -76,9 +76,9 @@ const Transactions: React.FC<TransactionsProps> = (
 };
 
 function useTransactionsChanged() {
-  const serviceWorkerContext = useContext(ServiceWorkerMessagesContext);
+  const serviceWorkerContext = React.useContext(ServiceWorkerMessagesContext);
 
-  return useMemo(
+  return React.useMemo(
     () =>
       serviceWorkerContext.transactionChanged.pipe(
         map((changed) => changed.transactions),
@@ -90,7 +90,7 @@ function useTransactionsChanged() {
 }
 
 function useSeperatedTransactions(transactions: TranscationRecord[]) {
-  return useMemo(() => {
+  return React.useMemo(() => {
     const toBuyJSXList: React.JSX.Element[] = [];
     const toSellJSXList: React.JSX.Element[] = [];
     for (const record of transactions) {
