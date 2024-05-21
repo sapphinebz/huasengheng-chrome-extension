@@ -22,10 +22,8 @@ const Transactions: React.FC<TransactionsProps> = (
 
   const [transactions] = useObservableState(transactionsChanged, []);
 
-  const toSellJSXElements = useTypedTransactions(
-    transactions,
-    FOCUS_TYPE.WANT_TO_SELL
-  );
+  const [toBuyJSXElements, toSellJSXElements] =
+    useSeperatedTransactions(transactions);
 
   const containsToSell = useMemo(
     () => toSellJSXElements.length > 0,
@@ -39,11 +37,6 @@ const Transactions: React.FC<TransactionsProps> = (
     }
     return className;
   }, [containsToSell]);
-
-  const toBuyJSXElements = useTypedTransactions(
-    transactions,
-    FOCUS_TYPE.WANT_TO_BUY
-  );
 
   const containsToBuy = useMemo(
     () => toBuyJSXElements.length > 0,
@@ -96,18 +89,22 @@ function useTransactionsChanged() {
   );
 }
 
-function useTypedTransactions(
-  transactions: TranscationRecord[],
-  type: FOCUS_TYPE
-) {
+function useSeperatedTransactions(transactions: TranscationRecord[]) {
   return useMemo(() => {
-    const jsxList: React.JSX.Element[] = [];
+    const toBuyJSXList: React.JSX.Element[] = [];
+    const toSellJSXList: React.JSX.Element[] = [];
     for (const record of transactions) {
-      if (record.type === type) {
-        jsxList.push(<TransactionRecord record={record}></TransactionRecord>);
+      if (record.type === FOCUS_TYPE.WANT_TO_BUY) {
+        toBuyJSXList.push(
+          <TransactionRecord record={record}></TransactionRecord>
+        );
+      } else if (record.type === FOCUS_TYPE.WANT_TO_SELL) {
+        toSellJSXList.push(
+          <TransactionRecord record={record}></TransactionRecord>
+        );
       }
     }
-    return jsxList;
+    return [toBuyJSXList, toSellJSXList] as const;
   }, [transactions]);
 }
 
