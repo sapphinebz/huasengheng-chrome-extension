@@ -81,7 +81,11 @@ function useTransactionsChanged() {
   return React.useMemo(
     () =>
       serviceWorkerContext.transactionChanged.pipe(
-        map((changed) => changed.transactions),
+        map((changed) => {
+          const transactions = changed.transactions;
+          transactions.sort((a, b) => b.price - a.price);
+          return transactions;
+        }),
         distinctUntilChanged(),
         share()
       ),

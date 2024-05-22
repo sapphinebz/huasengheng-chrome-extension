@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Subject, merge } from "rxjs";
 import { concatMap, exhaustMap, switchMap, tap } from "rxjs/operators";
 import { FocusedTransaction } from "../../models/focus-transaction.model";
@@ -12,6 +6,7 @@ import { getInvestmentsStorage } from "../../utils/get-investments-storage";
 import { setInvestmentsStorage } from "../../utils/set-investments-storage";
 import InvestmentRow from "./investment-row";
 import { TransactionsContext } from "../contexts/transactions.context";
+import * as React from "react";
 
 interface Props {}
 
@@ -24,6 +19,7 @@ const InvestmentTable: React.FC<Props> = React.memo(() => {
       getInvestmentsStorage(),
       context.onReload.pipe(exhaustMap(() => getInvestmentsStorage()))
     ).subscribe((list) => {
+      list.sort((a, b) => b.price - a.price);
       setTransactions(list);
     });
 

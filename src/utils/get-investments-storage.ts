@@ -9,7 +9,6 @@ export function getInvestmentsStorage() {
       if (!subscriber.closed) {
         if (storage.invests?.list) {
           const list = storage.invests.list as FocusedTransaction[];
-          list.sort((a, b) => b.price - a.price);
           subscriber.next(list);
         } else {
           subscriber.next([]);
