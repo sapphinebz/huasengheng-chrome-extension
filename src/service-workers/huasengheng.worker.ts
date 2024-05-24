@@ -6,29 +6,19 @@ import {
   ReplaySubject,
   combineLatest,
   connectable,
-  from,
   merge,
   using,
 } from "rxjs";
 import { filter, share, switchMap } from "rxjs/operators";
 import { FocusedTransaction } from "../models/focus-transaction.model";
-import { FOCUS_TYPE } from "../models/focus-type.model";
 import { TransactionChange } from "../models/transaction-change.model";
-import { WEIGHT_UNIT } from "../models/weight-unit.model";
 import { getPriceSchedule, toTransactionChange } from "../utils/fetch-gold";
 import { getInvestmentsStorage } from "../utils/get-investments-storage";
 
-const onStorageTransChanged = new Observable<FocusedTransaction[]>(
-  (subscriber) => {
-    chrome.storage.onChanged.addListener((changes, area) => {
-      const list = changes.invests.newValue.list;
-      subscriber.next(list);
-    });
-  }
-);
+const investmentsStorageChanges = onInvestmentsStorageChanges().pipe(share());
 
 const transactionChange$ = connectable(
-  merge(getInvestmentsStorage(), onStorageTransChanged).pipe(
+  merge(getInvestmentsStorage(), investmentsStorageChanges).pipe(
     switchMap((focusTrans) => {
       return getPriceSchedule({ GoldType: "HSH", period: 3000 }).pipe(
         toTransactionChange(focusTrans)
@@ -129,4 +119,22 @@ function sendTransactionBackTo(
       () => contentScripts$
     );
   };
+}
+
+function onInvestmentsStorageChanges() {
+  return new Observable<FocusedTransaction[]>((subscriber) => {
+    const callback = (
+      changes: {
+        [name: string]: chrome.storage.StorageChange;
+      },
+      area: string
+    ) => {
+      if (changes.invests) {
+        const list = changes.invests.newValue.list;
+        subscriber.next(list);
+      }
+    };
+    chrome.storage.onChanged.addListener(callback);
+    return () => chrome.storage.onChanged.removeListener(callback);
+  });
 }
