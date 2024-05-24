@@ -1,4 +1,4 @@
-import React, {
+import {
   LegacyRef,
   useCallback,
   useContext,
@@ -6,6 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import * as React from "react";
 import { useForm } from "../../utils/hooks/use-form";
 import { Subject, exhaustMap, switchMap, tap } from "rxjs";
 import { FocusedTransaction } from "../../models/focus-transaction.model";
@@ -65,24 +66,26 @@ const FiboRetracement: React.FC<Props> = React.memo(() => {
     saveRef.current.next(formValue);
   }, [form]);
   return (
-    <div className="flex-row" ref={form.formRef as LegacyRef<HTMLDivElement>}>
-      <div>
-        <h2>Fibo Retracement</h2>
+    <div className="popup-row-container">
+      <div style={{ lineHeight: "3rem" }}>
+        <span className="popup-header">Fibo Retracement</span>
       </div>
-      <div>
-        <span>High Price:</span>
-        <span>
-          <input type="number" data-formcontrol-name="highPrice" />
-        </span>
-      </div>
-      <div>
-        <span> Low Price: </span>
-        <span>
-          <input type="number" data-formcontrol-name="lowPrice" />
-        </span>
-      </div>
-      <div>
-        <button onClick={clickSave}>save</button>
+      <div className="flex-row" ref={form.formRef as LegacyRef<HTMLDivElement>}>
+        <div>
+          <span>High Price:</span>
+          <span>
+            <input type="number" data-formcontrol-name="highPrice" />
+          </span>
+        </div>
+        <div>
+          <span> Low Price: </span>
+          <span>
+            <input type="number" data-formcontrol-name="lowPrice" />
+          </span>
+        </div>
+        <div>
+          <button onClick={clickSave}>save</button>
+        </div>
       </div>
     </div>
   );

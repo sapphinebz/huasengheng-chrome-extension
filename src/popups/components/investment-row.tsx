@@ -1,4 +1,4 @@
-import React, {
+import {
   LegacyRef,
   useCallback,
   useContext,
@@ -7,14 +7,17 @@ import React, {
   useRef,
   useState,
 } from "react";
+import * as React from "react";
 import { FocusedTransaction } from "../../models/focus-transaction.model";
 import { Subject, exhaustMap, switchMap, tap } from "rxjs";
 import { getInvestmentsStorage } from "../../utils/get-investments-storage";
 import { setInvestmentsStorage } from "../../utils/set-investments-storage";
 import { useForm } from "../../utils/hooks/use-form";
 import { TransactionsContext } from "../contexts/transactions.context";
+import { FOCUS_TYPE } from "@models/focus-type.model";
 
 interface InvestmentRowProps {
+  type: FOCUS_TYPE;
   model: FocusedTransaction | null;
   onDelete: (model: FocusedTransaction) => void;
 }
@@ -37,6 +40,7 @@ const InvestmentRow: React.FC<InvestmentRowProps> = React.memo((props) => {
   }, [form, props.model]);
 
   const clickAddRef = useRef(new Subject<FocusedTransaction>());
+
   useEffect(() => {
     const clickAdd$ = clickAddRef.current;
     const subscription = clickAdd$
@@ -62,9 +66,11 @@ const InvestmentRow: React.FC<InvestmentRowProps> = React.memo((props) => {
   const clickSave = useCallback(() => {
     form.disableForm();
     const formValue = form.getRawValue();
+    formValue.type = props.type;
+
     clickAddRef.current.next(formValue);
     setShowSaveButton(false);
-  }, [clickAddRef, form]);
+  }, [clickAddRef, form, props.type]);
 
   const clickRemove = useCallback(() => {
     if (props.model) {
@@ -89,12 +95,6 @@ const InvestmentRow: React.FC<InvestmentRowProps> = React.memo((props) => {
       </td>
       <td>
         <input data-formcontrol-name="weight" type="number" />
-      </td>
-      <td>
-        <select data-formcontrol-name="type">
-          <option value="sell">want to sell</option>
-          <option value="buy">want to buy</option>
-        </select>
       </td>
       <td>
         <span style={{ display: "flex", columnGap: "0.5rem" }}>
