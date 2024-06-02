@@ -16,17 +16,19 @@ export function useSpeakOnThePeak(
       .subscribe(([prevTransactions, curTransactions]) => {
         for (const transaction of curTransactions) {
           const { type, diffPrice, totalPrice } = transaction;
-
+          const key = generateTransactionRecordKey(transaction);
+          const option = transactionsContext.findState(key);
+          if (option.muted) {
+            continue;
+          }
           if (type === FOCUS_TYPE.WANT_TO_SELL) {
             if (diffPrice === 0) {
               speakWithSpeechSynthesis(`ราคาเท่าทุน`);
             } else if (diffPrice > 0) {
-              const key = generateTransactionRecordKey(transaction);
               const lastTranscation = prevTransactions.find(
                 (prev) => generateTransactionRecordKey(prev) === key
               );
-              const option = transactionsContext.findState(key);
-              if (option && !option.muted) {
+              if (option) {
                 let spokenMessage = ``;
                 if (lastTranscation) {
                   if (lastTranscation.totalPrice > totalPrice) {
@@ -42,7 +44,7 @@ export function useSpeakOnThePeak(
             if (diffPrice <= 0) {
               const key = generateTransactionRecordKey(transaction);
               const option = transactionsContext.findState(key);
-              if (option && !option.muted) {
+              if (option) {
                 speakWithSpeechSynthesis(
                   `ราคาพร้อมทำกำไร ${Math.abs(diffPrice)}`
                 );
