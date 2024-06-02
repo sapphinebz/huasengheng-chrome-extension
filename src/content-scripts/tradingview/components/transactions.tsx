@@ -2,12 +2,12 @@ import { ServiceWorkerMessagesContext } from "@utils/contexts/service-worker-mes
 import { useObservableState } from "@utils/hooks/use-observable-state";
 import { useSpeakOnThePeak } from "@utils/hooks/use-speak-on-the-peak";
 import { useVisibilityState } from "@utils/hooks/use-visibility-state";
-import { makeItMovable } from "@utils/make-it-movable";
 import * as React from "react";
-import { distinctUntilChanged, map, share } from "rxjs/operators";
+import { distinctUntilChanged, map, share, switchMap } from "rxjs/operators";
 import { FOCUS_TYPE } from "@models/focus-type.model";
 import { TranscationRecord } from "@models/transaction-record.model";
 import TransactionRecord from "./transaction-record";
+import useMovable from "@utils/hooks/use-movable";
 
 const HIDDEN_STYLE_CLASS = "chrome-hidden";
 
@@ -51,16 +51,7 @@ const Transactions: React.FC<TransactionsProps> = (
     return className;
   }, [containsToBuy]);
 
-  const containerRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    const el = containerRef.current;
-    if (el) {
-      const subscription = makeItMovable(el).subscribe();
-      return () => subscription.unsubscribe();
-    }
-  }, [containerRef]);
-
+  const containerRef = useMovable<React.ElementRef<"div">>();
   const { nodeClassName } = useVisibilityState();
 
   return (

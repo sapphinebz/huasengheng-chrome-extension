@@ -5,6 +5,7 @@ import { formatCurrencyWithoutSymbol } from "@utils/format-currency-without-symb
 import { makeItMovable } from "@utils/make-it-movable";
 import { useVisibilityState } from "@utils/hooks/use-visibility-state";
 import { ServiceWorkerMessagesContext } from "@utils/contexts/service-worker-messages.context";
+import useMovable from "@utils/hooks/use-movable";
 
 interface ComponentProps {}
 const HuasenghengCurrentPrice: React.FC<ComponentProps> = React.memo(
@@ -39,15 +40,7 @@ const HuasenghengCurrentPrice: React.FC<ComponentProps> = React.memo(
       };
     }, [context]);
 
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-      const el = containerRef.current;
-      if (el) {
-        const subscription = makeItMovable(el).subscribe();
-        return () => subscription.unsubscribe();
-      }
-    }, [containerRef]);
+    const containerRef = useMovable<React.ElementRef<"div">>();
 
     const { nodeClassName } = useVisibilityState();
 
