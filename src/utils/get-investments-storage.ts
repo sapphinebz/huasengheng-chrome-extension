@@ -1,5 +1,3 @@
-/// <reference types="chrome-types" />
-
 import { Observable } from "rxjs";
 import { FocusedTransaction } from "../models/focus-transaction.model";
 

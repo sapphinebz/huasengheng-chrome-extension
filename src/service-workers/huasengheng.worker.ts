@@ -1,17 +1,6 @@
-/// <reference types="chrome-types" />
-
-import {
-  MonoTypeOperatorFunction,
-  Observable,
-  ReplaySubject,
-  combineLatest,
-  connectable,
-  merge,
-  using,
-} from "rxjs";
-import { filter, share, switchMap } from "rxjs/operators";
+import { Observable, ReplaySubject, connectable, merge } from "rxjs";
+import { share, switchMap } from "rxjs/operators";
 import { FocusedTransaction } from "../models/focus-transaction.model";
-import { TransactionChange } from "../models/transaction-change.model";
 import { getPriceSchedule, toTransactionChange } from "../utils/fetch-gold";
 import { getInvestmentsStorage } from "../utils/get-investments-storage";
 
