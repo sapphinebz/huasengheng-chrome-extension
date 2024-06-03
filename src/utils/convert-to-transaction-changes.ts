@@ -6,20 +6,20 @@ import { transparentWeight } from "./transparent-weight";
 
 export function convertToTransactionChanges(options: {
   focusTrans: FocusedTransaction[];
-  buy: string;
-  sell: string;
+  buy: number;
+  sell: number;
 }): TranscationRecord[] {
   const { focusTrans, buy, sell } = options;
 
   const records = focusTrans.map(({ owner, price, weight, type, unit }) => {
-    let textPrice = "0";
+    let textPrice = 0;
     if (type === FOCUS_TYPE.WANT_TO_BUY) {
       textPrice = sell;
     } else if (type === FOCUS_TYPE.WANT_TO_SELL) {
       textPrice = buy;
     }
     const weightInBaht = transparentWeight(weight, unit);
-    const currentPrice = currencyToNum(textPrice);
+    const currentPrice = textPrice;
     const diffPrice = currentPrice - price;
     const totalPrice = diffPrice * weightInBaht;
     const record: TranscationRecord = {

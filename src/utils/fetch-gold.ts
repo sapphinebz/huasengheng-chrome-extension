@@ -73,13 +73,15 @@ export function toTransactionChange(
   focusTrans: FocusedTransaction[]
 ): OperatorFunction<GetPriceRes, TransactionChange> {
   return map((price) => {
+    const huasenghengBuy = currencyToNum(price.Buy);
+    const huasenghengSell = currencyToNum(price.Sell);
     return {
-      huasenghengBuy: currencyToNum(price.Buy),
-      huasenghengSell: currencyToNum(price.Sell),
+      huasenghengBuy,
+      huasenghengSell,
       transactions: convertToTransactionChanges({
         focusTrans: focusTrans,
-        sell: price.Sell,
-        buy: price.Buy,
+        sell: huasenghengSell,
+        buy: huasenghengBuy,
       }),
     } as TransactionChange;
   });

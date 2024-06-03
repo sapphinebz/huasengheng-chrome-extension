@@ -1,13 +1,15 @@
+import { TransactionChange } from "@models/transaction-change.model";
 import { formatCurrencyWithoutSymbol } from "@utils/format-currency-without-symbol";
 import useMovable from "@utils/hooks/use-movable";
-import useSWM from "@utils/hooks/use-swm";
 import * as React from "react";
 import { useMemo } from "react";
 
-interface ComponentProps {}
+interface ComponentProps {
+  transactionChanged: TransactionChange;
+}
 const HuasenghengCurrentPrice: React.FC<ComponentProps> = React.memo(
   (props) => {
-    const transactionChanged = useSWM();
+    const { transactionChanged } = props;
 
     const buyPrice = useMemo(
       () => formatCurrencyWithoutSymbol(transactionChanged.huasenghengBuy),

@@ -1,13 +1,23 @@
-import { Observable, ReplaySubject, connectable, merge } from "rxjs";
-import { share, switchMap } from "rxjs/operators";
+import {
+  Observable,
+  ReplaySubject,
+  connectable,
+  firstValueFrom,
+  merge,
+} from "rxjs";
+import { share, shareReplay, switchMap, take } from "rxjs/operators";
 import { FocusedTransaction } from "../models/focus-transaction.model";
 import { getPriceSchedule, toTransactionChange } from "../utils/fetch-gold";
 import { getInvestmentsStorage } from "../utils/get-investments-storage";
+import { TransactionChange } from "@models/transaction-change.model";
 
-const investmentsStorageChanges = onInvestmentsStorageChanges().pipe(share());
+const investmentsStorage$ = merge(
+  getInvestmentsStorage(),
+  onInvestmentsStorageChanges()
+).pipe(shareReplay(1));
 
 const transactionChanges$ = connectable(
-  merge(getInvestmentsStorage(), investmentsStorageChanges).pipe(
+  investmentsStorage$.pipe(
     switchMap((focusTrans) => {
       return getPriceSchedule({ GoldType: "HSH", period: 3000 }).pipe(
         toTransactionChange(focusTrans)
@@ -52,6 +62,15 @@ chrome.action.onClicked.addListener(async (tab) => {
 });
 
 tradingViewConnection().subscribe();
+// One-time request
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message === "get-investments-storage") {
+    investmentsStorage$.pipe(take(1)).subscribe((investments) => {
+      sendResponse(investments);
+    });
+  }
+  return true;
+});
 
 function tradingViewConnection() {
   return new Observable<chrome.runtime.Port>((subscriber) => {
@@ -70,87 +89,6 @@ function tradingViewConnection() {
     });
   });
 }
-
-// function tradingViewConnected() {
-//   return new Observable<ContentScriptMessage>((subscriber) => {
-//     chrome.runtime.onConnect.addListener((port) => {
-//       console.log(port);
-//       if (port.name === "https://www.tradingview.com") {
-//         port.onMessage.addListener((message) => {
-//           console.log(message);
-//         });
-//         // const tabId = port.sender?.tab?.id;
-//         const subscription = transactionChange$.subscribe(
-//           (transactionChanged) => {
-//             port.postMessage({ transactionChanged });
-//           }
-//         );
-//         subscriber.add(() => {
-//           subscription.unsubscribe();
-//         });
-//       }
-//     });
-//   });
-// }
-
-// const contentScript$ = fromContentScript().pipe(share());
-
-// contentScript$
-//   .pipe(
-//     sendTransactionBackTo("https://s.tradingview.com/"),
-//     sendTransactionBackTo("https://www.tradingview.com/chart/")
-//   )
-//   .subscribe();
-
-// interface ContentScriptMessage {
-//   message: any;
-//   tabId: number;
-//   senderUrl: string;
-// }
-
-// function fromContentScript() {
-//   return new Observable<ContentScriptMessage>((subscriber) => {
-//     chrome.runtime.onMessage.addListener(
-//       (message: TransactionChange, sender, sendResponse) => {
-//         const tabId = sender.tab?.id;
-//         const senderUrl = sender.url;
-//         if (tabId && senderUrl) {
-//           subscriber.next({ tabId, message, senderUrl });
-//         }
-
-//         return undefined;
-//       }
-//     );
-//   });
-// }
-
-// function sendTransactionBackTo(
-//   url: string
-// ): MonoTypeOperatorFunction<ContentScriptMessage> {
-//   return (contentScripts$: Observable<ContentScriptMessage>) => {
-//     const target$ = contentScripts$.pipe(
-//       filter(({ senderUrl }) => senderUrl.startsWith(url))
-//     );
-
-//     return using(
-//       () => {
-//         return combineLatest([transactionChange$, target$])
-//           .pipe(
-//             switchMap(async (source) => {
-//               const [transactions, { tabId }] = source;
-//               const response = await chrome.tabs.sendMessage(
-//                 tabId,
-//                 transactions
-//               );
-//               return response;
-//             })
-//           )
-//           .subscribe();
-//       },
-//       () => contentScripts$
-//     );
-//   };
-// }
 
 function onInvestmentsStorageChanges() {
   return new Observable<FocusedTransaction[]>((subscriber) => {

@@ -49,7 +49,7 @@ const subscribeSWM = (handler: () => void) => {
   };
 };
 
-export default function useSWM() {
+export default function useSWMTransactionChanged() {
   return useSyncExternalStore(
     subscribeSWM,
     () => globalMessage, // client component

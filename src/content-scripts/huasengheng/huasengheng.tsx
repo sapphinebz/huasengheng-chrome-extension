@@ -1,8 +1,7 @@
+import TransactionsComponent from "@utils/components/transactions.component";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
-
-import TransactionsComponent from "@utils/components/transactions.component";
-import useSWMTransactionChanged from "@utils/hooks/use-swm-transaction-changed";
+import useContentTransactionChange from "./hooks/use-content-transaction-change";
 import HuasenghengCurrentPrice from "@utils/components/huasengheng-current-price";
 
 const container = document.createElement("div");
@@ -10,18 +9,18 @@ document.body.append(container);
 
 if (container) {
   const root = createRoot(container);
-  root.render(<TradingView></TradingView>);
+  root.render(<Huasengheng></Huasengheng>);
 }
 
-function TradingView() {
-  const transactionChanged = useSWMTransactionChanged();
+function Huasengheng() {
+  const transactionChange = useContentTransactionChange();
   return (
     <>
       <TransactionsComponent
-        transactionChange={transactionChanged}
+        transactionChange={transactionChange}
       ></TransactionsComponent>
       <HuasenghengCurrentPrice
-        transactionChanged={transactionChanged}
+        transactionChanged={transactionChange}
       ></HuasenghengCurrentPrice>
     </>
   );

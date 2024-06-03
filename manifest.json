@@ -10,7 +10,7 @@
     {
       "matches": ["https://www.huasengheng.com/*"],
       "css": ["src/content-scripts/huasengheng/huasengheng.css"],
-      "js": ["src/content-scripts/huasengheng/huasengheng.ts"]
+      "js": ["src/content-scripts/huasengheng/huasengheng.tsx"]
     },
     {
       "matches": [
