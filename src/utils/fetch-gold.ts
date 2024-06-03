@@ -56,8 +56,7 @@ export function getPriceSchedule(options: {
         )
       )
     ),
-    filter((price): price is GetPriceRes => Boolean(price)),
-    distinctUntilChanged((prev, cur) => prev.Buy === cur.Buy)
+    filter((price): price is GetPriceRes => Boolean(price))
   );
 }
 

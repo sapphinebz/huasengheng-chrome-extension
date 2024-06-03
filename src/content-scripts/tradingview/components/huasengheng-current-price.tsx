@@ -1,54 +1,28 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import * as React from "react";
-import { TransactionChange } from "@models/transaction-change.model";
 import { formatCurrencyWithoutSymbol } from "@utils/format-currency-without-symbol";
-import { makeItMovable } from "@utils/make-it-movable";
-import { useVisibilityState } from "@utils/hooks/use-visibility-state";
-import { ServiceWorkerMessagesContext } from "@utils/contexts/service-worker-messages.context";
 import useMovable from "@utils/hooks/use-movable";
+import useSWM from "@utils/hooks/use-swm";
+import * as React from "react";
+import { useMemo } from "react";
 
 interface ComponentProps {}
 const HuasenghengCurrentPrice: React.FC<ComponentProps> = React.memo(
   (props) => {
-    const context = useContext(ServiceWorkerMessagesContext);
+    const transactionChanged = useSWM();
 
-    const [transactionChanges, setTransactionChanges] =
-      useState<TransactionChange>();
+    const buyPrice = useMemo(
+      () => formatCurrencyWithoutSymbol(transactionChanged.huasenghengBuy),
+      [transactionChanged.huasenghengBuy]
+    );
 
-    const buyPrice = useMemo(() => {
-      if (transactionChanges) {
-        const { huasenghengBuy } = transactionChanges;
-        return formatCurrencyWithoutSymbol(huasenghengBuy);
-      }
-      return "";
-    }, [transactionChanges?.huasenghengBuy]);
-
-    const sellPrice = useMemo(() => {
-      if (transactionChanges) {
-        const { huasenghengSell } = transactionChanges;
-        return formatCurrencyWithoutSymbol(huasenghengSell);
-      }
-      return "";
-    }, [transactionChanges?.huasenghengSell]);
-
-    useEffect(() => {
-      const subscription = context.transactionChanged.subscribe((changes) =>
-        setTransactionChanges(changes)
-      );
-      return () => {
-        subscription.unsubscribe();
-      };
-    }, [context]);
+    const sellPrice = useMemo(
+      () => formatCurrencyWithoutSymbol(transactionChanged.huasenghengSell),
+      [transactionChanged.huasenghengSell]
+    );
 
     const containerRef = useMovable<React.ElementRef<"div">>();
 
-    const { nodeClassName } = useVisibilityState();
-
     return (
-      <div
-        ref={containerRef}
-        className={`chrome-hua-fixed chrome-hua-font ${nodeClassName}`}
-      >
+      <div ref={containerRef} className="chrome-hua-fixed chrome-hua-font">
         <div>
           <div className="chrome-hua-header-buy">รับซื้อ</div>
           <div className="chrome-hua-value-buy">{buyPrice}</div>

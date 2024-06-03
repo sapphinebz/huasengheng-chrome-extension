@@ -1,13 +1,10 @@
-import { ServiceWorkerMessagesContext } from "@utils/contexts/service-worker-messages.context";
-import { useObservableState } from "@utils/hooks/use-observable-state";
-import { useSpeakOnThePeak } from "@utils/hooks/use-speak-on-the-peak";
-import { useVisibilityState } from "@utils/hooks/use-visibility-state";
-import * as React from "react";
-import { distinctUntilChanged, map, share, switchMap } from "rxjs/operators";
 import { FOCUS_TYPE } from "@models/focus-type.model";
 import { TranscationRecord } from "@models/transaction-record.model";
-import TransactionRecord from "./transaction-record";
 import useMovable from "@utils/hooks/use-movable";
+import { useSpeakOnThePeak } from "@utils/hooks/use-speak-on-the-peak";
+import useSWM from "@utils/hooks/use-swm";
+import * as React from "react";
+import TransactionRecord from "./transaction-record";
 
 const HIDDEN_STYLE_CLASS = "chrome-hidden";
 
@@ -16,14 +13,13 @@ interface TransactionsProps {}
 const Transactions: React.FC<TransactionsProps> = (
   props: TransactionsProps
 ) => {
-  const transactionsChanged = useTransactionsChanged();
+  const transactionChanged = useSWM();
 
-  useSpeakOnThePeak(transactionsChanged);
+  useSpeakOnThePeak(transactionChanged.transactions);
 
-  const [transactions] = useObservableState(transactionsChanged, []);
-
-  const [toBuyJSXElements, toSellJSXElements] =
-    useSeperatedTransactions(transactions);
+  const [toBuyJSXElements, toSellJSXElements] = useSeperatedTransactions(
+    transactionChanged.transactions
+  );
 
   const containsToSell = React.useMemo(
     () => toSellJSXElements.length > 0,
@@ -52,12 +48,11 @@ const Transactions: React.FC<TransactionsProps> = (
   }, [containsToBuy]);
 
   const containerRef = useMovable<React.ElementRef<"div">>();
-  const { nodeClassName } = useVisibilityState();
 
   return (
     <div
       ref={containerRef}
-      className={`chrome-fixed ${nodeClassName}`}
+      className="chrome-fixed"
       style={{ display: "flex", flexDirection: "column", rowGap: "0.5rem" }}
     >
       <div className={classNameToSell}>{toSellJSXElements}</div>
@@ -65,24 +60,6 @@ const Transactions: React.FC<TransactionsProps> = (
     </div>
   );
 };
-
-function useTransactionsChanged() {
-  const serviceWorkerContext = React.useContext(ServiceWorkerMessagesContext);
-
-  return React.useMemo(
-    () =>
-      serviceWorkerContext.transactionChanged.pipe(
-        map((changed) => {
-          const transactions = changed.transactions;
-          transactions.sort((a, b) => b.price - a.price);
-          return transactions;
-        }),
-        distinctUntilChanged(),
-        share()
-      ),
-    [serviceWorkerContext]
-  );
-}
 
 function useSeperatedTransactions(transactions: TranscationRecord[]) {
   return React.useMemo(() => {
