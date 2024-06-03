@@ -1,13 +1,13 @@
-import React, { useCallback, useMemo, useState } from "react";
+import * as React from "react";
 
 interface Props {
   muted: boolean;
   onClickToggle?: (newValue: boolean) => void;
 }
 const MutedIcon: React.FC<Props> = React.memo((props) => {
-  const [muted, setMuted] = useState<boolean>(props.muted);
+  const [muted, setMuted] = React.useState<boolean>(props.muted);
 
-  const VolumeIcon = useMemo(() => {
+  const VolumeIcon = React.useMemo(() => {
     if (muted) {
       return (
         <path
@@ -24,7 +24,7 @@ const MutedIcon: React.FC<Props> = React.memo((props) => {
     );
   }, [muted]);
 
-  const clickToggle = useCallback(() => {
+  const clickToggle = React.useCallback(() => {
     setMuted((muted) => {
       const newValue = !muted;
       props.onClickToggle?.(newValue);

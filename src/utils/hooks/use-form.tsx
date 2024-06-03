@@ -1,24 +1,18 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import * as React from "react";
 
 type FormElements = { [key: string]: HTMLInputElement | HTMLSelectElement };
 
-export function useForm<T = any>() {
-  const formRef = useRef<HTMLElement>(null);
+export function useForm<T extends Record<string, any>>() {
+  const formRef = React.useRef<HTMLElement>(null);
 
-  const getForm = useCallback(() => {
+  const getForm = React.useCallback(() => {
     const formEl = formRef.current;
     if (formEl) {
       const elList = formEl.querySelectorAll<
         HTMLInputElement | HTMLSelectElement
       >("[data-formcontrol-name]");
 
-      const forms = {};
+      const forms = {} as Record<string, any>;
 
       for (const el of elList) {
         const name = el.dataset.formcontrolName;
@@ -32,7 +26,7 @@ export function useForm<T = any>() {
     return {} as FormElements;
   }, [formRef]);
 
-  const reset = useCallback(() => {
+  const reset = React.useCallback(() => {
     const form = getForm();
     for (const [name, element] of Object.entries(form)) {
       if (element) {
@@ -41,7 +35,7 @@ export function useForm<T = any>() {
     }
   }, [getForm]);
 
-  const patchValue = useCallback(
+  const patchValue = React.useCallback(
     (model: T) => {
       const form = getForm();
       for (const [name, element] of Object.entries(form)) {
@@ -65,7 +59,7 @@ export function useForm<T = any>() {
     [getForm]
   );
 
-  const disableForm = useCallback(() => {
+  const disableForm = React.useCallback(() => {
     const form = getForm();
     for (const [name, element] of Object.entries(form)) {
       if (element) {
@@ -74,9 +68,9 @@ export function useForm<T = any>() {
     }
   }, [getForm]);
 
-  const getRawValue = useCallback(() => {
+  const getRawValue = React.useCallback(() => {
     const form = getForm();
-    const formValue = {} as T;
+    const formValue = {} as Record<string, any>;
     for (const [name, element] of Object.entries(form)) {
       if (element) {
         if (element instanceof HTMLInputElement && element.type === "number") {
@@ -94,7 +88,7 @@ export function useForm<T = any>() {
     return formValue;
   }, [getForm]);
 
-  const form = useMemo(
+  const form = React.useMemo(
     () => ({ formRef, getForm, patchValue, disableForm, getRawValue, reset }),
     [formRef, getForm, patchValue, disableForm, getRawValue, reset]
   );

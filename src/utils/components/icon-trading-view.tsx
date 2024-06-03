@@ -1,20 +1,14 @@
-import React, {
-  MouseEventHandler,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import * as React from "react";
 
 const IconTradingView = React.memo(() => {
-  const openTradingView = useCallback<MouseEventHandler<HTMLAnchorElement>>(
-    (event) => {
-      event.preventDefault();
-      chrome.tabs.create({
-        url: "https://www.tradingview.com/chart/29SNRMLp/?symbol=OANDA%3AXAUUSD",
-      });
-    },
-    []
-  );
+  const openTradingView = React.useCallback<
+    React.MouseEventHandler<HTMLAnchorElement>
+  >((event) => {
+    event.preventDefault();
+    chrome.tabs.create({
+      url: "https://www.tradingview.com/chart/29SNRMLp/?symbol=OANDA%3AXAUUSD",
+    });
+  }, []);
   return (
     <div className="tv-icon-container">
       <a

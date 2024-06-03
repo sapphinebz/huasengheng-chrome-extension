@@ -19,5 +19,5 @@ export function useMutedState(transaction: TranscationRecord) {
     setMuted(muted);
   }, []);
 
-  return [muted, wrappedSetMuted];
+  return [muted, wrappedSetMuted] as [boolean, (value: boolean) => void];
 }
