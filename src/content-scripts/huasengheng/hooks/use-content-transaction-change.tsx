@@ -3,8 +3,9 @@ import { convertToTransactionChanges } from "@utils/convert-to-transaction-chang
 import { currencyToNum } from "@utils/currency-to-num";
 import { getInvestmentsStorage } from "@utils/get-investments-storage";
 import { watchContentChanges } from "@utils/watch-content-changes";
+import { watchUntilExist } from "@utils/watch-until-exist";
 import { useSyncExternalStore } from "react";
-import { EMPTY, combineLatest, map, shareReplay } from "rxjs";
+import { EMPTY, combineLatest, map, shareReplay, switchMap } from "rxjs";
 
 let globalMessage: TransactionChange = {
   huasenghengSell: 0,
@@ -34,17 +35,25 @@ function getTransactionChanges() {
 }
 
 function getPriceSchedule() {
-  const huasenghengSellEl = document.querySelector<HTMLSpanElement>("#ask965");
-  const huasenghengBuyEl = document.querySelector<HTMLSpanElement>("#bid965");
-  if (huasenghengSellEl && huasenghengBuyEl) {
-    return watchContentChanges(huasenghengSellEl).pipe(
-      map(() => ({
-        huasenghengBuy: currencyToNum(huasenghengBuyEl.innerText),
-        huasenghengSell: currencyToNum(huasenghengSellEl.innerText),
-      }))
-    );
-  }
-  return EMPTY;
+  return watchUntilExist(1000, () =>
+    document.querySelector<HTMLSpanElement>("#ask965")
+  ).pipe(
+    switchMap(() => {
+      const huasenghengSellEl =
+        document.querySelector<HTMLSpanElement>("#ask965");
+      const huasenghengBuyEl =
+        document.querySelector<HTMLSpanElement>("#bid965");
+      if (huasenghengSellEl && huasenghengBuyEl) {
+        return watchContentChanges(huasenghengSellEl).pipe(
+          map(() => ({
+            huasenghengBuy: currencyToNum(huasenghengBuyEl.innerText),
+            huasenghengSell: currencyToNum(huasenghengSellEl.innerText),
+          }))
+        );
+      }
+      return EMPTY;
+    })
+  );
 }
 
 const transactionChanges = getTransactionChanges().pipe(

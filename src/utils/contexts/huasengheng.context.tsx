@@ -33,7 +33,8 @@ function createState() {
       if (!state) {
         createState(key, transaction);
       } else {
-        state.next({ ...transaction, muted: true });
+        const snapshot = state.getValue();
+        state.next({ ...snapshot, ...transaction });
       }
     }
   };
